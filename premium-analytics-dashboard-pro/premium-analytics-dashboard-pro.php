@@ -3,7 +3,7 @@
  * Plugin Name:       Premium Analytics Dashboard Pro
  * Plugin URI:        https://k12onlineschools.com/premium-analytics-dashboard-pro
  * Description:       Enterprise-grade, standalone WordPress analytics dashboard. Tracks visitors, captures Contact Form 7 leads dynamically, and renders a premium admin dashboard with charts, reports and lead management — no external SaaS, no Node.js, no React.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            Premium Analytics Dashboard Pro Team
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin ke core constants — har jagah in hi ko use karenge, kahin bhi
  * hardcoded path ya version number nahi likhenge.
  */
-define( 'PAD_VERSION', '1.0.0' );
+define( 'PAD_VERSION', '1.1.0' );
 define( 'PAD_DB_VERSION', '1.0.0' );
 define( 'PAD_PLUGIN_FILE', __FILE__ );
 define( 'PAD_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

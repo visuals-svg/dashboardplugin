@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,9 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.1.0 =
+* Phase 2: Automatic Contact Form 7 lead capture (unlimited forms), dynamic field storage with no hardcoded field names, first-touch UTM/referrer/landing-page attribution, IP/browser/OS/device detection, and uploaded file capture into a permanent media directory.
 
 = 1.0.0 =
 * Phase 1: Plugin architecture, folder structure, database schema, activation/deactivation, admin menu, and the premium dashboard UI shell.

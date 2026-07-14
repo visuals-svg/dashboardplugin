@@ -26,6 +26,7 @@ class PAD_Autoloader {
 		'includes/',
 		'includes/helpers/',
 		'admin/',
+		'public/',
 	);
 
 	/**

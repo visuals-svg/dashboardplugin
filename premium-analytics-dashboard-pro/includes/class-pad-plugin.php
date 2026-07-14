@@ -32,7 +32,9 @@ class PAD_Plugin {
 		$this->loader = new PAD_Loader();
 
 		$this->set_locale();
+		$this->define_public_hooks();
 		$this->define_admin_hooks();
+		$this->define_form_tracking_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -44,6 +46,28 @@ class PAD_Plugin {
 	private function set_locale() {
 		$i18n = new PAD_i18n();
 		$this->loader->add_action( 'init', $i18n, 'load_plugin_textdomain' );
+	}
+
+	/**
+	 * Frontend attribution tracking (UTM/referrer/landing page) register karta hai.
+	 *
+	 * @return void
+	 */
+	private function define_public_hooks() {
+		$public = new PAD_Public();
+		$this->loader->add_action( 'init', $public, 'capture_attribution' );
+	}
+
+	/**
+	 * Contact Form 7 lead capture hook register karta hai. Yeh hook
+	 * safe hai chahe CF7 installed ho ya na ho — event bas tabhi
+	 * fire hoga jab CF7 khud ise trigger karega.
+	 *
+	 * @return void
+	 */
+	private function define_form_tracking_hooks() {
+		$cf7 = new PAD_CF7_Integration();
+		$this->loader->add_action( 'wpcf7_before_send_mail', $cf7, 'capture_submission', 10, 1 );
 	}
 
 	/**
