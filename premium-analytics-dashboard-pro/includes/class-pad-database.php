@@ -84,6 +84,21 @@ class PAD_Database {
 	}
 
 	/**
+	 * Agar schema version badal gaya hai to tables ko turant re-sync
+	 * karta hai (dbDelta khud detect kar leta hai ki kaunse columns
+	 * add/modify karne hain). Plugin bootstrap ke shuru me hi call hota
+	 * hai, taaki upgrade ke baad wait na karna pade agle daily cron tak.
+	 *
+	 * @return void
+	 */
+	public static function maybe_upgrade() {
+
+		if ( get_option( 'pad_db_version' ) !== PAD_DB_VERSION ) {
+			self::create_tables();
+		}
+	}
+
+	/**
 	 * Har table ka CREATE TABLE SQL statement laut ata hai.
 	 * dbDelta ki strict formatting rules follow ki gayi hain
 	 * (do spaces before KEY, backtick-free field definitions, etc.)
@@ -230,15 +245,17 @@ class PAD_Database {
 			visitor_id BIGINT UNSIGNED NOT NULL,
 			started_at DATETIME NOT NULL,
 			ended_at DATETIME NULL,
+			last_activity_at DATETIME NULL,
 			duration INT UNSIGNED NOT NULL DEFAULT 0,
 			pages_visited INT UNSIGNED NOT NULL DEFAULT 0,
 			entry_page TEXT NULL,
 			exit_page TEXT NULL,
-			is_bounce TINYINT(1) NOT NULL DEFAULT 0,
+			is_bounce TINYINT(1) NOT NULL DEFAULT 1,
 			PRIMARY KEY  (id),
 			UNIQUE KEY session_key (session_key),
 			KEY visitor_id (visitor_id),
-			KEY started_at (started_at)
+			KEY started_at (started_at),
+			KEY last_activity_at (last_activity_at)
 		) {$charset_collate};";
 
 		// Pageviews — session ke andar visit hui har page.

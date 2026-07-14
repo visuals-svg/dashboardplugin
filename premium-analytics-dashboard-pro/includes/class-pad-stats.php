@@ -59,7 +59,9 @@ class PAD_Stats {
 	}
 
 	/**
-	 * Pichhle 5 minutes me active (abhi "online") visitors.
+	 * Pichhle 5 minutes me active (abhi "online") visitors — session
+	 * ki `last_activity_at` (naa ki `started_at`) check karte hain,
+	 * taaki lambi chal rahi sessions bhi sahi se "online" dikhein.
 	 *
 	 * @return int
 	 */
@@ -71,7 +73,7 @@ class PAD_Stats {
 
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(DISTINCT visitor_id) FROM {$table} WHERE ended_at IS NULL AND started_at >= %s",
+				"SELECT COUNT(DISTINCT visitor_id) FROM {$table} WHERE ended_at IS NULL AND last_activity_at >= %s",
 				$threshold
 			)
 		);

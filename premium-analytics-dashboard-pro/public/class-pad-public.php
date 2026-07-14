@@ -35,6 +35,29 @@ class PAD_Public {
 	const COOKIE_DAYS = 30;
 
 	/**
+	 * Persistent visitor-identity cookie ka naam (Unique/Returning
+	 * visitor pehchaanne ke liye) — 1 saal tak valid.
+	 *
+	 * @var string
+	 */
+	const VISITOR_COOKIE = 'pad_visitor_id';
+
+	/**
+	 * Session cookie ka naam — sliding inactivity-window ke saath.
+	 *
+	 * @var string
+	 */
+	const SESSION_COOKIE = 'pad_session_id';
+
+	/**
+	 * Session kitne minutes ki inactivity ke baad khatam maani jaati hai
+	 * (industry-standard 30 minute idle timeout).
+	 *
+	 * @var int
+	 */
+	const SESSION_MINUTES = 30;
+
+	/**
 	 * First page-load par attribution data capture karke cookie set karta hai.
 	 * Agar cookie already set hai (yaani visitor pehle bhi aa chuka hai)
 	 * to kuch nahi karte — yeh "first-touch attribution" hai.
@@ -83,6 +106,107 @@ class PAD_Public {
 
 		// Isi request ke andar bhi turant available rahe (agar CF7 form isi page par ho).
 		$_COOKIE[ self::COOKIE_NAME ] = $encoded;
+	}
+
+	/**
+	 * Visitor tracking ke liye do cookies ensure karta hai:
+	 * - VISITOR_COOKIE: sirf ek baar set hoti hai (1 saal), Unique vs
+	 *   Returning visitor decide karne ke liye.
+	 * - SESSION_COOKIE: har qualifying page-load par refresh hoti hai
+	 *   (sliding 30-min window) — cookie absent milna hamesha "nayi
+	 *   session start" maana jaata hai, jo standard analytics practice hai.
+	 *
+	 * @return void
+	 */
+	public function ensure_session_identity() {
+
+		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+
+		if ( headers_sent() ) {
+			return;
+		}
+
+		$cookie_args_base = array(
+			'path'     => defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/',
+			'domain'   => defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '',
+			'secure'   => is_ssl(),
+			'httponly' => true,
+			'samesite' => 'Lax',
+		);
+
+		if ( empty( $_COOKIE[ self::VISITOR_COOKIE ] ) ) {
+			$visitor_id = wp_generate_uuid4();
+
+			setcookie(
+				self::VISITOR_COOKIE,
+				$visitor_id,
+				array_merge( $cookie_args_base, array( 'expires' => time() + YEAR_IN_SECONDS ) )
+			);
+
+			$_COOKIE[ self::VISITOR_COOKIE ] = $visitor_id;
+		}
+
+		$session_id = ! empty( $_COOKIE[ self::SESSION_COOKIE ] ) ? $_COOKIE[ self::SESSION_COOKIE ] : wp_generate_uuid4();
+
+		setcookie(
+			self::SESSION_COOKIE,
+			$session_id,
+			array_merge( $cookie_args_base, array( 'expires' => time() + ( self::SESSION_MINUTES * MINUTE_IN_SECONDS ) ) )
+		);
+
+		$_COOKIE[ self::SESSION_COOKIE ] = $session_id;
+	}
+
+	/**
+	 * Kya current visitor ko track karna chahiye? Apne khud ke
+	 * dashboard team members (jinke paas pad_view_dashboard capability
+	 * hai) ko stats se exclude karte hain, taaki internal traffic se
+	 * analytics data pollute na ho.
+	 *
+	 * @return bool
+	 */
+	public static function should_track_current_visitor() {
+
+		$should_track = ! ( is_user_logged_in() && current_user_can( 'pad_view_dashboard' ) );
+
+		/**
+		 * Filter: pad_should_track_visitor
+		 *
+		 * @param bool $should_track Default decision.
+		 */
+		return (bool) apply_filters( 'pad_should_track_visitor', $should_track );
+	}
+
+	/**
+	 * Frontend par lightweight tracker script enqueue karta hai —
+	 * sirf real visitors ke liye, apni team ke liye nahi.
+	 *
+	 * @return void
+	 */
+	public function enqueue_tracker_script() {
+
+		if ( is_admin() || ! self::should_track_current_visitor() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'pad-tracker',
+			PAD_PLUGIN_URL . 'assets/js/pad-tracker.js',
+			array(),
+			PAD_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'pad-tracker',
+			'padTracker',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'pad_tracker_nonce' ),
+			)
+		);
 	}
 
 	/**

@@ -180,6 +180,70 @@ class PAD_Helper {
 	}
 
 	/**
+	 * Referrer aur UTM parameters se traffic source ko ek fixed bucket
+	 * me classify karta hai: Google Search, Facebook, Instagram,
+	 * LinkedIn, Paid, Organic (dusre search engines), Referral (koi
+	 * bhi aur website), ya Direct.
+	 *
+	 * @param string $referrer   Full referrer URL (attribution cookie se).
+	 * @param string $utm_source utm_source query parameter.
+	 * @param string $utm_medium utm_medium query parameter.
+	 * @return string
+	 */
+	public static function classify_referral_source( $referrer, $utm_source = '', $utm_medium = '' ) {
+
+		$utm_medium = strtolower( (string) $utm_medium );
+		$utm_source = strtolower( (string) $utm_source );
+
+		$paid_mediums = array( 'cpc', 'ppc', 'paid', 'ads', 'paidsocial', 'display' );
+
+		if ( in_array( $utm_medium, $paid_mediums, true ) ) {
+			return __( 'Paid', 'premium-analytics-dashboard-pro' );
+		}
+
+		$host = '';
+
+		if ( ! empty( $referrer ) ) {
+			$parsed = wp_parse_url( $referrer );
+			$host   = isset( $parsed['host'] ) ? strtolower( $parsed['host'] ) : '';
+		}
+
+		if ( empty( $host ) && empty( $utm_source ) ) {
+			return __( 'Direct', 'premium-analytics-dashboard-pro' );
+		}
+
+		if ( false !== strpos( $host, 'google.' ) || 'google' === $utm_source ) {
+			return __( 'Google Search', 'premium-analytics-dashboard-pro' );
+		}
+
+		if ( false !== strpos( $host, 'facebook.com' ) || 'facebook' === $utm_source ) {
+			return __( 'Facebook', 'premium-analytics-dashboard-pro' );
+		}
+
+		if ( false !== strpos( $host, 'instagram.com' ) || 'instagram' === $utm_source ) {
+			return __( 'Instagram', 'premium-analytics-dashboard-pro' );
+		}
+
+		if ( false !== strpos( $host, 'linkedin.com' ) || 'linkedin' === $utm_source ) {
+			return __( 'LinkedIn', 'premium-analytics-dashboard-pro' );
+		}
+
+		$organic_search_hosts = array( 'bing.com', 'yahoo.com', 'duckduckgo.com', 'yandex.com', 'baidu.com' );
+
+		foreach ( $organic_search_hosts as $search_host ) {
+			if ( false !== strpos( $host, $search_host ) ) {
+				return __( 'Organic', 'premium-analytics-dashboard-pro' );
+			}
+		}
+
+		if ( ! empty( $host ) ) {
+			return __( 'Referral', 'premium-analytics-dashboard-pro' );
+		}
+
+		return __( 'Direct', 'premium-analytics-dashboard-pro' );
+	}
+
+	/**
 	 * Plugin settings ko default values ke saath fetch karta hai.
 	 * Settings ek hi option row me store hoti hain ('pad_settings').
 	 *

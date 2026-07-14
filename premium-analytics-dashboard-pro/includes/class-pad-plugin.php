@@ -29,12 +29,15 @@ class PAD_Plugin {
 	 * Constructor — dependencies load karta hai aur hooks queue karta hai.
 	 */
 	public function __construct() {
+		PAD_Database::maybe_upgrade();
+
 		$this->loader = new PAD_Loader();
 
 		$this->set_locale();
 		$this->define_public_hooks();
 		$this->define_admin_hooks();
 		$this->define_form_tracking_hooks();
+		$this->define_visitor_tracking_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -56,6 +59,25 @@ class PAD_Plugin {
 	private function define_public_hooks() {
 		$public = new PAD_Public();
 		$this->loader->add_action( 'init', $public, 'capture_attribution' );
+		$this->loader->add_action( 'init', $public, 'ensure_session_identity' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $public, 'enqueue_tracker_script' );
+	}
+
+	/**
+	 * Visitor/session/pageview tracking ke AJAX endpoints register karta hai.
+	 * `nopriv` variant zaroori hai kyunki zyada tar visitors logged-in nahi hote.
+	 *
+	 * @return void
+	 */
+	private function define_visitor_tracking_hooks() {
+
+		$tracker = new PAD_Visitor_Tracker();
+
+		$this->loader->add_action( 'wp_ajax_pad_track_pageview', $tracker, 'ajax_track_pageview' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pad_track_pageview', $tracker, 'ajax_track_pageview' );
+
+		$this->loader->add_action( 'wp_ajax_pad_track_pageview_end', $tracker, 'ajax_track_pageview_end' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pad_track_pageview_end', $tracker, 'ajax_track_pageview_end' );
 	}
 
 	/**

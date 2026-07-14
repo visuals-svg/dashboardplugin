@@ -152,7 +152,7 @@ $pad_cf7_active = class_exists( 'WPCF7_ContactForm' );
 </section>
 
 <p class="pad-phase-note">
-	<?php esc_html_e( 'Note: Contact Form 7 lead capture ab live hai. Chart rendering (ApexCharts) aur Visitor Tracking agle development phases me wire honge — yeh containers ab hi se semantic aur data-ready hain.', 'premium-analytics-dashboard-pro' ); ?>
+	<?php esc_html_e( 'Note: Contact Form 7 lead capture aur Visitor/Session tracking ab live hain. Chart rendering (ApexCharts) agle development phase me wire hoga — yeh containers ab hi se semantic aur data-ready hain.', 'premium-analytics-dashboard-pro' ); ?>
 </p>
 
 <?php require __DIR__ . '/layout-footer.php'; ?>

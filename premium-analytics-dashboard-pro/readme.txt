@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,13 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.2.0 =
+* Phase 3: Visitor tracking — unique/returning visitors, sessions, page views, visit duration and bounce rate, all captured via a lightweight vanilla-JS frontend beacon (no framework, no build step).
+* First-touch traffic-source classification (Google Search, Facebook, Instagram, LinkedIn, Paid, Organic, Referral, Direct) reusing the Phase 2 attribution cookie.
+* Screen resolution, browser language and timezone captured client-side; browser/OS/device parsed server-side.
+* Country detection via zero-cost CDN/proxy headers (e.g. Cloudflare) with a `pad_geoip_lookup` filter for site owners who want to plug in their own local GeoIP database — no third-party geolocation API is ever called.
+* Fixed the "Visitors Online" dashboard card to use last-activity time instead of session-start time, so long-running sessions are still counted correctly.
 
 = 1.1.0 =
 * Phase 2: Automatic Contact Form 7 lead capture (unlimited forms), dynamic field storage with no hardcoded field names, first-touch UTM/referrer/landing-page attribution, IP/browser/OS/device detection, and uploaded file capture into a permanent media directory.
