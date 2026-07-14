@@ -115,9 +115,17 @@ $pad_cf7_active = class_exists( 'WPCF7_ContactForm' );
 
 <section class="pad-charts-grid">
 	<div class="pad-panel pad-panel-wide">
-		<div class="pad-panel-head">
-			<h2><?php esc_html_e( 'Leads Over Time', 'premium-analytics-dashboard-pro' ); ?></h2>
-			<p><?php esc_html_e( 'Daily / Weekly / Monthly / Yearly interactive chart yahan render hoga.', 'premium-analytics-dashboard-pro' ); ?></p>
+		<div class="pad-panel-head pad-panel-head-row">
+			<div>
+				<h2><?php esc_html_e( 'Leads Over Time', 'premium-analytics-dashboard-pro' ); ?></h2>
+				<p><?php esc_html_e( 'Interactive chart — period badalne ke liye upar diye gaye tabs use karein.', 'premium-analytics-dashboard-pro' ); ?></p>
+			</div>
+			<div class="pad-chart-tabs">
+				<button type="button" class="is-active" data-granularity="daily"><?php esc_html_e( 'Daily', 'premium-analytics-dashboard-pro' ); ?></button>
+				<button type="button" data-granularity="weekly"><?php esc_html_e( 'Weekly', 'premium-analytics-dashboard-pro' ); ?></button>
+				<button type="button" data-granularity="monthly"><?php esc_html_e( 'Monthly', 'premium-analytics-dashboard-pro' ); ?></button>
+				<button type="button" data-granularity="yearly"><?php esc_html_e( 'Yearly', 'premium-analytics-dashboard-pro' ); ?></button>
+			</div>
 		</div>
 		<div id="pad-chart-leads" class="pad-chart-placeholder" data-chart="leads-over-time"></div>
 	</div>
@@ -138,21 +146,22 @@ $pad_cf7_active = class_exists( 'WPCF7_ContactForm' );
 
 	<div class="pad-panel">
 		<div class="pad-panel-head">
-			<h2><?php esc_html_e( 'Device & Browser', 'premium-analytics-dashboard-pro' ); ?></h2>
+			<h2><?php esc_html_e( 'Device Analytics', 'premium-analytics-dashboard-pro' ); ?></h2>
 		</div>
-		<div id="pad-chart-device" class="pad-chart-placeholder" data-chart="device-browser"></div>
+		<div id="pad-chart-device" class="pad-chart-placeholder" data-chart="device-analytics"></div>
 	</div>
 
 	<div class="pad-panel pad-panel-wide">
 		<div class="pad-panel-head">
 			<h2><?php esc_html_e( 'Hourly Activity Heatmap', 'premium-analytics-dashboard-pro' ); ?></h2>
+			<p><?php esc_html_e( 'Din aur ghante ke hisaab se visitor activity — sabse gehra rang sabse zyada traffic dikhata hai.', 'premium-analytics-dashboard-pro' ); ?></p>
 		</div>
 		<div id="pad-chart-heatmap" class="pad-chart-placeholder" data-chart="hourly-heatmap"></div>
 	</div>
 </section>
 
 <p class="pad-phase-note">
-	<?php esc_html_e( 'Note: Contact Form 7 lead capture aur Visitor/Session tracking ab live hain. Chart rendering (ApexCharts) agle development phase me wire hoga — yeh containers ab hi se semantic aur data-ready hain.', 'premium-analytics-dashboard-pro' ); ?>
+	<?php esc_html_e( 'Deeper breakdowns (City, Browser, Operating System, Lead Conversion) ke liye Analytics page dekhein.', 'premium-analytics-dashboard-pro' ); ?>
 </p>
 
 <?php require __DIR__ . '/layout-footer.php'; ?>

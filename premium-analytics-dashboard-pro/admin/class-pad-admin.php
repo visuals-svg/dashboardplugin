@@ -205,6 +205,30 @@ class PAD_Admin {
 				'themeMode' => $settings['theme_mode'],
 			)
 		);
+
+		// ApexCharts (vendored locally) sirf Dashboard aur Analytics par —
+		// 500KB+ ki library baaki 7 pages par load karne ki zaroorat nahi.
+		$is_chart_page = ( false !== strpos( $hook_suffix, 'toplevel_page_' . self::MENU_SLUG ) )
+			|| ( false !== strpos( $hook_suffix, 'pad-analytics' ) );
+
+		if ( $is_chart_page ) {
+
+			wp_enqueue_script(
+				'pad-apexcharts',
+				PAD_PLUGIN_URL . 'assets/js/vendor/apexcharts.min.js',
+				array(),
+				'3.54.1',
+				true
+			);
+
+			wp_enqueue_script(
+				'pad-charts',
+				PAD_PLUGIN_URL . 'assets/js/pad-charts.js',
+				array( 'pad-admin', 'pad-apexcharts' ),
+				PAD_VERSION,
+				true
+			);
+		}
 	}
 
 	/**
@@ -259,6 +283,70 @@ class PAD_Admin {
 		update_option( 'pad_settings', $settings );
 
 		wp_send_json_success( array( 'mode' => $mode ) );
+	}
+
+	/**
+	 * Chart data ka single AJAX dispatcher — `chart` request param ke
+	 * hisaab se sahi PAD_Charts method call karta hai. Capability check
+	 * 'pad_view_analytics' se hota hai (Dashboard aur Analytics dono
+	 * pages ke charts is capability ke peeche gated hain).
+	 *
+	 * @return void
+	 */
+	public function ajax_get_chart_data() {
+
+		check_ajax_referer( 'pad_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'pad_view_analytics' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'premium-analytics-dashboard-pro' ) ), 403 );
+		}
+
+		$chart = isset( $_GET['chart'] ) ? sanitize_key( wp_unslash( $_GET['chart'] ) ) : '';
+
+		switch ( $chart ) {
+
+			case 'leads-over-time':
+				$granularity = isset( $_GET['granularity'] ) ? sanitize_key( wp_unslash( $_GET['granularity'] ) ) : 'daily';
+				$allowed     = array( 'daily', 'weekly', 'monthly', 'yearly' );
+				$granularity = in_array( $granularity, $allowed, true ) ? $granularity : 'daily';
+				wp_send_json_success( PAD_Charts::get_leads_over_time( $granularity ) );
+				break;
+
+			case 'traffic-sources':
+				wp_send_json_success( PAD_Charts::get_traffic_sources() );
+				break;
+
+			case 'country-analytics':
+				wp_send_json_success( PAD_Charts::get_visitor_breakdown( 'country' ) );
+				break;
+
+			case 'city-analytics':
+				wp_send_json_success( PAD_Charts::get_visitor_breakdown( 'city' ) );
+				break;
+
+			case 'browser-analytics':
+				wp_send_json_success( PAD_Charts::get_visitor_breakdown( 'browser' ) );
+				break;
+
+			case 'device-analytics':
+				wp_send_json_success( PAD_Charts::get_visitor_breakdown( 'device' ) );
+				break;
+
+			case 'os-analytics':
+				wp_send_json_success( PAD_Charts::get_visitor_breakdown( 'os' ) );
+				break;
+
+			case 'lead-conversion':
+				wp_send_json_success( PAD_Charts::get_lead_conversion() );
+				break;
+
+			case 'hourly-heatmap':
+				wp_send_json_success( PAD_Charts::get_hourly_heatmap() );
+				break;
+
+			default:
+				wp_send_json_error( array( 'message' => __( 'Unknown chart.', 'premium-analytics-dashboard-pro' ) ), 400 );
+		}
 	}
 
 	/**

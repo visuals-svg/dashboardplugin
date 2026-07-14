@@ -22,6 +22,7 @@
 			var next = current === 'dark' ? 'light' : 'dark';
 
 			$wrap.attr( 'data-theme', next );
+			document.dispatchEvent( new CustomEvent( 'pad:theme-changed', { detail: { mode: next } } ) );
 
 			$.post( padAdmin.ajaxUrl, {
 				action: 'pad_toggle_theme_mode',

@@ -1,0 +1,11 @@
+ApexCharts v3.54.1
+https://apexcharts.com
+
+Copyright (c) 2018-2024 ApexCharts
+
+Released under the MIT License.
+https://github.com/apexcharts/apexcharts.js/blob/main/LICENSE
+
+Vendored locally in this plugin (assets/js/vendor/apexcharts.min.js) so
+the plugin remains fully standalone at runtime — no CDN request is ever
+made to render charts.

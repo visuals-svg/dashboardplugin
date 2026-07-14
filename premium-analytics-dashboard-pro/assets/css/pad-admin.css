@@ -340,6 +340,44 @@
 	font-weight: 700;
 }
 
+.pad-panel-head-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.pad-chart-tabs {
+	display: flex;
+	gap: 4px;
+	background: var(--pad-surface-solid);
+	border: 1px solid var(--pad-border);
+	border-radius: 10px;
+	padding: 4px;
+}
+
+.pad-chart-tabs button {
+	border: none;
+	background: transparent;
+	padding: 6px 12px;
+	border-radius: 7px;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--pad-text-muted);
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pad-chart-tabs button:hover {
+	color: var(--pad-text);
+}
+
+.pad-chart-tabs button.is-active {
+	background: var(--pad-accent);
+	color: #fff;
+}
+
 .pad-panel-head p {
 	margin: 0 0 14px;
 	font-size: 12.5px;

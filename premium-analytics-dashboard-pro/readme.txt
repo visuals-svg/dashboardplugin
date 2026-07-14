@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,12 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.3.0 =
+* Phase 4: Interactive charts, powered by ApexCharts (vendored locally under assets/js/vendor — no CDN, no external request at runtime).
+* Dashboard: Leads Over Time (with Daily/Weekly/Monthly/Yearly tabs), Traffic Sources, Country Analytics, Device Analytics, and an Hourly Activity Heatmap.
+* Analytics: Lead Conversion trend, Country/City/Browser/Device/Operating System breakdowns.
+* All charts fetch real data through a capability-gated, nonce-verified `pad_get_chart_data` AJAX endpoint, and re-theme instantly when Dark/Light mode is toggled.
 
 = 1.2.0 =
 * Phase 3: Visitor tracking — unique/returning visitors, sessions, page views, visit duration and bounce rate, all captured via a lightweight vanilla-JS frontend beacon (no framework, no build step).

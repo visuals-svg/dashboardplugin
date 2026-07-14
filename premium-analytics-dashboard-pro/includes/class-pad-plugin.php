@@ -107,6 +107,7 @@ class PAD_Plugin {
 
 		$this->loader->add_action( 'wp_ajax_pad_toggle_theme_mode', $admin, 'ajax_toggle_theme_mode' );
 		$this->loader->add_action( 'admin_post_pad_save_settings', $admin, 'handle_save_settings' );
+		$this->loader->add_action( 'wp_ajax_pad_get_chart_data', $admin, 'ajax_get_chart_data' );
 	}
 
 	/**
