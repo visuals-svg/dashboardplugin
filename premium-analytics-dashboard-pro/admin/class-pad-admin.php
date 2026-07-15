@@ -225,6 +225,7 @@ class PAD_Admin {
 					'leadsByForm'      => __( 'Leads by Form', 'premium-analytics-dashboard-pro' ),
 					'leadsByCountry'   => __( 'Leads by Country', 'premium-analytics-dashboard-pro' ),
 					'trafficSources'   => __( 'Traffic Sources', 'premium-analytics-dashboard-pro' ),
+					'noNotifications'  => __( 'Abhi tak koi notification nahi hai.', 'premium-analytics-dashboard-pro' ),
 				),
 			)
 		);
@@ -424,6 +425,13 @@ class PAD_Admin {
 			'theme_mode'          => $current_settings['theme_mode'],
 			'dashboard_widgets'   => array_values( array_intersect( $allowed_widgets, $posted_widgets ) ),
 			'delete_on_uninstall' => isset( $_POST['delete_on_uninstall'] ) ? true : false,
+			'notify_email_enabled'        => isset( $_POST['notify_email_enabled'] ) ? true : false,
+			'notify_email_recipients'     => isset( $_POST['notify_email_recipients'] ) ? sanitize_text_field( wp_unslash( $_POST['notify_email_recipients'] ) ) : '',
+			'notify_telegram_enabled'     => isset( $_POST['notify_telegram_enabled'] ) ? true : false,
+			'notify_telegram_bot_token'   => isset( $_POST['notify_telegram_bot_token'] ) ? sanitize_text_field( wp_unslash( $_POST['notify_telegram_bot_token'] ) ) : '',
+			'notify_telegram_chat_id'     => isset( $_POST['notify_telegram_chat_id'] ) ? sanitize_text_field( wp_unslash( $_POST['notify_telegram_chat_id'] ) ) : '',
+			'notify_whatsapp_enabled'     => isset( $_POST['notify_whatsapp_enabled'] ) ? true : false,
+			'notify_whatsapp_webhook_url' => isset( $_POST['notify_whatsapp_webhook_url'] ) ? esc_url_raw( wp_unslash( $_POST['notify_whatsapp_webhook_url'] ) ) : '',
 		);
 
 		update_option( 'pad_settings', $settings );

@@ -40,6 +40,7 @@ class PAD_Plugin {
 		$this->define_visitor_tracking_hooks();
 		$this->define_leads_management_hooks();
 		$this->define_reports_hooks();
+		$this->define_notification_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -137,6 +138,23 @@ class PAD_Plugin {
 	}
 
 	/**
+	 * Dashboard notification bell ke AJAX endpoints register karta hai
+	 * (naya lead capture hone par email/Telegram/WhatsApp dispatch
+	 * PAD_CF7_Integration se seedha PAD_Notifications::notify_new_lead()
+	 * call karke hota hai, alag se hook ki zaroorat nahi).
+	 *
+	 * @return void
+	 */
+	private function define_notification_hooks() {
+
+		$notifications = new PAD_Notifications();
+
+		$this->loader->add_action( 'wp_ajax_pad_get_notifications', $notifications, 'ajax_list' );
+		$this->loader->add_action( 'wp_ajax_pad_mark_notification_read', $notifications, 'ajax_mark_read' );
+		$this->loader->add_action( 'wp_ajax_pad_mark_all_notifications_read', $notifications, 'ajax_mark_all_read' );
+	}
+
+	/**
 	 * Admin menu, assets, aur admin-ajax hooks register karta hai.
 	 *
 	 * @return void
@@ -166,8 +184,8 @@ class PAD_Plugin {
 	}
 
 	/**
-	 * Daily cron callback — DB version sync check karta hai taaki
-	 * upgrade ke baad schema silently repair ho jaaye.
+	 * Daily cron callback — DB version sync aur purani, already-read
+	 * notifications ki cleanup.
 	 *
 	 * @return void
 	 */
@@ -176,6 +194,8 @@ class PAD_Plugin {
 		if ( get_option( 'pad_db_version' ) !== PAD_DB_VERSION ) {
 			PAD_Database::create_tables();
 		}
+
+		PAD_Notifications::cleanup_old();
 	}
 
 	/**

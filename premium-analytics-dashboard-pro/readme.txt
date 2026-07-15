@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,13 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.6.0 =
+* Phase 7: Notifications. A dashboard notification bell (header dropdown, unread badge, mark read / mark all read) fires on every new lead.
+* Email notification via wp_mail() to one or more configurable recipients.
+* Telegram notification via the free, public Telegram Bot API (site owner supplies their own Bot Token + Chat ID).
+* WhatsApp "integration ready": a provider-agnostic webhook URL (Twilio, Gupshup, 360dialog, or a custom relay) that receives a JSON payload on every new lead — no specific paid SaaS is bundled or called automatically.
+* All three channels are opt-in and only ever fire when the site owner has supplied their own credentials/URL in Settings — nothing is sent anywhere without explicit configuration.
 
 = 1.5.0 =
 * Phase 6: Full Reports generation — Daily, Weekly, Monthly, Quarterly, Yearly and Custom Date Range, each producing a complete business report (leads by status/form/country, visitor/session/pageview totals, average session duration, bounce rate, conversion rate, traffic sources, and a leads trend chart).

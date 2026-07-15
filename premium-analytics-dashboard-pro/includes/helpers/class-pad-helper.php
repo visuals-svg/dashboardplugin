@@ -266,6 +266,13 @@ class PAD_Helper {
 			'theme_mode'        => 'light',
 			'dashboard_widgets' => array( 'leads', 'visitors', 'conversion', 'charts' ),
 			'delete_on_uninstall' => false,
+			'notify_email_enabled'        => true,
+			'notify_email_recipients'     => get_option( 'admin_email' ),
+			'notify_telegram_enabled'     => false,
+			'notify_telegram_bot_token'   => '',
+			'notify_telegram_chat_id'     => '',
+			'notify_whatsapp_enabled'     => false,
+			'notify_whatsapp_webhook_url' => '',
 		);
 
 		$saved = get_option( 'pad_settings', array() );

@@ -34,6 +34,22 @@ $pad_user       = wp_get_current_user();
 				<?php echo esc_html( wp_date( 'D, d M Y — H:i' ) ); ?>
 			</span>
 
+			<div class="pad-notification-wrap">
+				<button type="button" id="pad-notification-toggle" class="pad-icon-btn" aria-label="<?php esc_attr_e( 'Notifications', 'premium-analytics-dashboard-pro' ); ?>">
+					<span class="dashicons dashicons-bell"></span>
+					<span class="pad-notification-badge" id="pad-notification-badge" hidden>0</span>
+				</button>
+				<div class="pad-notification-dropdown" id="pad-notification-dropdown" hidden>
+					<div class="pad-notification-dropdown-head">
+						<strong><?php esc_html_e( 'Notifications', 'premium-analytics-dashboard-pro' ); ?></strong>
+						<button type="button" id="pad-mark-all-read"><?php esc_html_e( 'Mark all read', 'premium-analytics-dashboard-pro' ); ?></button>
+					</div>
+					<div id="pad-notification-list">
+						<p class="pad-table-loading"><?php esc_html_e( 'Loading…', 'premium-analytics-dashboard-pro' ); ?></p>
+					</div>
+				</div>
+			</div>
+
 			<button type="button" id="pad-theme-toggle" class="pad-icon-btn" aria-label="<?php esc_attr_e( 'Toggle dark mode', 'premium-analytics-dashboard-pro' ); ?>">
 				<span class="dashicons dashicons-lightbulb"></span>
 			</button>

@@ -878,3 +878,90 @@
 		min-width: 100%;
 	}
 }
+
+/* ---------- Notifications ---------- */
+
+.pad-notification-wrap {
+	position: relative;
+}
+
+.pad-notification-badge {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	border-radius: 999px;
+	background: var(--pad-danger);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 800;
+	line-height: 16px;
+	text-align: center;
+}
+
+.pad-notification-dropdown {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	width: 340px;
+	max-height: 420px;
+	overflow-y: auto;
+	background: var(--pad-surface-solid);
+	border: 1px solid var(--pad-border);
+	border-radius: 12px;
+	box-shadow: var(--pad-shadow);
+	z-index: 50;
+}
+
+.pad-notification-dropdown-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pad-border);
+	font-size: 13px;
+}
+
+.pad-notification-dropdown-head button {
+	border: none;
+	background: transparent;
+	color: var(--pad-accent);
+	font-size: 11.5px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.pad-notification-item {
+	display: block;
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--pad-border);
+	text-decoration: none;
+	color: var(--pad-text);
+}
+
+.pad-notification-item:last-child {
+	border-bottom: none;
+}
+
+.pad-notification-item strong {
+	display: block;
+	font-size: 12.5px;
+}
+
+.pad-notification-item p {
+	margin: 3px 0;
+	font-size: 12px;
+	color: var(--pad-text-muted);
+}
+
+.pad-notification-item span {
+	font-size: 10.5px;
+	color: var(--pad-text-muted);
+}
+
+.pad-notification-unread {
+	background: rgba(99, 102, 241, 0.06);
+	border-left: 3px solid var(--pad-accent);
+}

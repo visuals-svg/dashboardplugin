@@ -35,6 +35,7 @@ class PAD_Database {
 		'sessions',
 		'pageviews',
 		'logs',
+		'notifications',
 	);
 
 	/**
@@ -118,6 +119,7 @@ class PAD_Database {
 		$sessions   = self::table( 'sessions' );
 		$pageviews  = self::table( 'pageviews' );
 		$logs       = self::table( 'logs' );
+		$notifications = self::table( 'notifications' );
 
 		$sql = array();
 
@@ -286,6 +288,20 @@ class PAD_Database {
 			PRIMARY KEY  (id),
 			KEY user_id (user_id),
 			KEY action (action),
+			KEY created_at (created_at)
+		) {$charset_collate};";
+
+		// Notifications — dashboard bell + email/Telegram/WhatsApp dispatch ka record.
+		$sql[] = "CREATE TABLE {$notifications} (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			type VARCHAR(50) NOT NULL DEFAULT '',
+			title VARCHAR(191) NOT NULL DEFAULT '',
+			message TEXT NULL,
+			link VARCHAR(500) NOT NULL DEFAULT '',
+			is_read TINYINT(1) NOT NULL DEFAULT 0,
+			created_at DATETIME NOT NULL,
+			PRIMARY KEY  (id),
+			KEY is_read (is_read),
 			KEY created_at (created_at)
 		) {$charset_collate};";
 

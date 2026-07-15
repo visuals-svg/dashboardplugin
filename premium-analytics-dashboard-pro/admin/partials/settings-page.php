@@ -112,6 +112,43 @@ $pad_widget_options = array(
 	</div>
 
 	<div class="pad-panel-head">
+		<h2><?php esc_html_e( 'Notifications', 'premium-analytics-dashboard-pro' ); ?></h2>
+		<p><?php esc_html_e( 'Naya lead aane par kis channel se alert milega, control karein.', 'premium-analytics-dashboard-pro' ); ?></p>
+	</div>
+
+	<div class="pad-form-grid">
+		<div class="pad-form-field pad-form-field-wide">
+			<label class="pad-checkbox">
+				<input type="checkbox" name="notify_email_enabled" value="1" <?php checked( ! empty( $pad_settings['notify_email_enabled'] ) ); ?> />
+				<?php esc_html_e( 'Email notification (naya lead aane par)', 'premium-analytics-dashboard-pro' ); ?>
+			</label>
+			<input type="text" name="notify_email_recipients" value="<?php echo esc_attr( $pad_settings['notify_email_recipients'] ); ?>" placeholder="admin@example.com, sales@example.com" />
+			<p class="pad-field-hint"><?php esc_html_e( 'Comma se separate multiple email addresses.', 'premium-analytics-dashboard-pro' ); ?></p>
+		</div>
+
+		<div class="pad-form-field pad-form-field-wide">
+			<label class="pad-checkbox">
+				<input type="checkbox" name="notify_telegram_enabled" value="1" <?php checked( ! empty( $pad_settings['notify_telegram_enabled'] ) ); ?> />
+				<?php esc_html_e( 'Telegram notification (Bot API, free)', 'premium-analytics-dashboard-pro' ); ?>
+			</label>
+			<div class="pad-form-row">
+				<input type="text" name="notify_telegram_bot_token" value="<?php echo esc_attr( $pad_settings['notify_telegram_bot_token'] ); ?>" placeholder="<?php esc_attr_e( 'Bot Token', 'premium-analytics-dashboard-pro' ); ?>" />
+				<input type="text" name="notify_telegram_chat_id" value="<?php echo esc_attr( $pad_settings['notify_telegram_chat_id'] ); ?>" placeholder="<?php esc_attr_e( 'Chat ID', 'premium-analytics-dashboard-pro' ); ?>" />
+			</div>
+			<p class="pad-field-hint"><?php esc_html_e( '@BotFather se apna Bot Token banayein, aur apne group/channel ka Chat ID daalein.', 'premium-analytics-dashboard-pro' ); ?></p>
+		</div>
+
+		<div class="pad-form-field pad-form-field-wide">
+			<label class="pad-checkbox">
+				<input type="checkbox" name="notify_whatsapp_enabled" value="1" <?php checked( ! empty( $pad_settings['notify_whatsapp_enabled'] ) ); ?> />
+				<?php esc_html_e( 'WhatsApp notification (apna webhook provider)', 'premium-analytics-dashboard-pro' ); ?>
+			</label>
+			<input type="text" name="notify_whatsapp_webhook_url" value="<?php echo esc_attr( $pad_settings['notify_whatsapp_webhook_url'] ); ?>" placeholder="https://your-whatsapp-provider.com/webhook" />
+			<p class="pad-field-hint"><?php esc_html_e( 'Kisi bhi WhatsApp API provider (Twilio, Gupshup, 360dialog, apna relay) ka webhook URL daalein — naya lead aane par yahan JSON POST hoga.', 'premium-analytics-dashboard-pro' ); ?></p>
+		</div>
+	</div>
+
+	<div class="pad-panel-head">
 		<h2><?php esc_html_e( 'Data & Uninstall', 'premium-analytics-dashboard-pro' ); ?></h2>
 	</div>
 
