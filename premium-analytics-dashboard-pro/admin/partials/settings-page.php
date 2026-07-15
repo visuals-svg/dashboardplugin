@@ -43,6 +43,35 @@ $pad_widget_options = array(
 	</div>
 <?php endif; ?>
 
+<?php if ( isset( $_GET['pad-api-regenerated'] ) ) : ?>
+	<div class="pad-notice pad-notice-success">
+		<span class="dashicons dashicons-yes-alt"></span>
+		<p><?php esc_html_e( 'Nayi API key generate ho gayi.', 'premium-analytics-dashboard-pro' ); ?></p>
+	</div>
+<?php endif; ?>
+
+<?php if ( isset( $_GET['pad-restored'] ) ) : ?>
+	<div class="pad-notice pad-notice-success">
+		<span class="dashicons dashicons-yes-alt"></span>
+		<p>
+			<?php
+			printf(
+				/* translators: %d: number of leads imported */
+				esc_html__( 'Backup successfully restore ho gaya — %d leads import kiye gaye.', 'premium-analytics-dashboard-pro' ),
+				isset( $_GET['leads_imported'] ) ? absint( $_GET['leads_imported'] ) : 0
+			);
+			?>
+		</p>
+	</div>
+<?php endif; ?>
+
+<?php if ( isset( $_GET['pad-restore-error'] ) ) : ?>
+	<div class="pad-notice pad-notice-warning">
+		<span class="dashicons dashicons-warning"></span>
+		<p><?php esc_html_e( 'Backup restore nahi ho saka — file invalid ya bahut badi thi. Dobara try karein.', 'premium-analytics-dashboard-pro' ); ?></p>
+	</div>
+<?php endif; ?>
+
 <form class="pad-panel pad-settings-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 	<input type="hidden" name="action" value="pad_save_settings" />
 	<?php wp_nonce_field( 'pad_save_settings', 'pad_settings_nonce' ); ?>
@@ -161,5 +190,52 @@ $pad_widget_options = array(
 		<button type="submit" class="button button-primary button-hero"><?php esc_html_e( 'Save Settings', 'premium-analytics-dashboard-pro' ); ?></button>
 	</div>
 </form>
+
+<section class="pad-panel">
+	<div class="pad-panel-head">
+		<h2><?php esc_html_e( 'API Settings', 'premium-analytics-dashboard-pro' ); ?></h2>
+		<p><?php esc_html_e( 'External systems is API key ke saath read-only leads/stats access le sakte hain.', 'premium-analytics-dashboard-pro' ); ?></p>
+	</div>
+
+	<div class="pad-form-grid">
+		<div class="pad-form-field pad-form-field-wide">
+			<label><?php esc_html_e( 'API Key', 'premium-analytics-dashboard-pro' ); ?></label>
+			<input type="text" readonly value="<?php echo esc_attr( PAD_REST_API::get_api_key() ); ?>" onclick="this.select();" />
+			<p class="pad-field-hint">
+				<code><?php echo esc_html( rest_url( 'pad/v1/leads' ) ); ?></code> &amp;
+				<code><?php echo esc_html( rest_url( 'pad/v1/stats' ) ); ?></code>
+				<?php esc_html_e( '— request header me "X-PAD-API-Key" bhejein, ya ?api_key= query param use karein.', 'premium-analytics-dashboard-pro' ); ?>
+			</p>
+		</div>
+	</div>
+
+	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'Regenerate karne se purani API key turant kaam karna band kar degi. Continue?', 'premium-analytics-dashboard-pro' ) ); ?>');">
+		<input type="hidden" name="action" value="pad_regenerate_api_key" />
+		<?php wp_nonce_field( 'pad_regenerate_api_key' ); ?>
+		<button type="submit" class="button"><?php esc_html_e( 'Regenerate API Key', 'premium-analytics-dashboard-pro' ); ?></button>
+	</form>
+</section>
+
+<section class="pad-panel">
+	<div class="pad-panel-head">
+		<h2><?php esc_html_e( 'Backup & Restore', 'premium-analytics-dashboard-pro' ); ?></h2>
+		<p><?php esc_html_e( 'Settings, Forms, Tags aur saare Leads (unki custom fields/notes/tags sahit) ek JSON file me backup karein. Restore hamesha additive hai — kabhi existing data delete/overwrite nahi karta.', 'premium-analytics-dashboard-pro' ); ?></p>
+	</div>
+
+	<div class="pad-form-row">
+		<a class="button button-primary" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'pad_download_backup' ), admin_url( 'admin-post.php' ) ), 'pad_backup_restore' ) ); ?>">
+			<?php esc_html_e( 'Download Backup (JSON)', 'premium-analytics-dashboard-pro' ); ?>
+		</a>
+	</div>
+
+	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" class="pad-form-row" style="margin-top: 16px;">
+		<input type="hidden" name="action" value="pad_restore_backup" />
+		<?php wp_nonce_field( 'pad_backup_restore' ); ?>
+		<input type="file" name="backup_file" accept="application/json" required />
+		<button type="submit" class="button" onclick="return confirm('<?php echo esc_js( __( 'Backup restore karein? Yeh Settings update karega aur Forms/Tags/Leads ko additively import karega.', 'premium-analytics-dashboard-pro' ) ); ?>');">
+			<?php esc_html_e( 'Restore from Backup', 'premium-analytics-dashboard-pro' ); ?>
+		</button>
+	</form>
+</section>
 
 <?php require __DIR__ . '/layout-footer.php'; ?>

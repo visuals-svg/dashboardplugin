@@ -41,6 +41,8 @@ class PAD_Plugin {
 		$this->define_leads_management_hooks();
 		$this->define_reports_hooks();
 		$this->define_notification_hooks();
+		$this->define_rest_api_hooks();
+		$this->define_backup_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -152,6 +154,33 @@ class PAD_Plugin {
 		$this->loader->add_action( 'wp_ajax_pad_get_notifications', $notifications, 'ajax_list' );
 		$this->loader->add_action( 'wp_ajax_pad_mark_notification_read', $notifications, 'ajax_mark_read' );
 		$this->loader->add_action( 'wp_ajax_pad_mark_all_notifications_read', $notifications, 'ajax_mark_all_read' );
+	}
+
+	/**
+	 * Read-only REST API (`pad/v1`) register karta hai, aur Settings
+	 * page ke "Regenerate API Key" button ka handler.
+	 *
+	 * @return void
+	 */
+	private function define_rest_api_hooks() {
+
+		$rest_api = new PAD_REST_API();
+
+		$this->loader->add_action( 'rest_api_init', $rest_api, 'register_routes' );
+		$this->loader->add_action( 'admin_post_pad_regenerate_api_key', $rest_api, 'handle_regenerate_key' );
+	}
+
+	/**
+	 * Backup download aur Restore upload ke admin-post hooks register karta hai.
+	 *
+	 * @return void
+	 */
+	private function define_backup_hooks() {
+
+		$backup = new PAD_Backup();
+
+		$this->loader->add_action( 'admin_post_pad_download_backup', $backup, 'export' );
+		$this->loader->add_action( 'admin_post_pad_restore_backup', $backup, 'restore' );
 	}
 
 	/**

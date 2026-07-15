@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.6.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,12 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 2.0.0 =
+* Phase 8 (final): Settings completion — API Settings (a read-only REST API under `pad/v1/leads` and `pad/v1/stats`, secured by a regenerable API key) and Backup & Restore (a downloadable JSON backup of Settings/Forms/Tags/Leads with dynamic fields, notes and tags; restore is always additive and never overwrites or deletes existing data).
+* Performance: a versioned transient cache now sits in front of the expensive dashboard aggregate queries (leads counts, conversion rate, average session duration, bounce rate), invalidated automatically the moment a lead is captured, deleted, or bulk-deleted — "Visitors Online" stays live/uncached by design.
+* Security: a final review pass across the whole codebase — no SQL injection vectors (every `$wpdb->query()` is either a static string or `$wpdb->prepare()`-wrapped), no dangerous PHP functions, file uploads validated with `is_uploaded_file()`, and uninstall cleanup extended to cover every table/option/transient this and prior phases introduced.
+* This completes every section of the original specification — the plugin is feature-complete.
 
 = 1.6.0 =
 * Phase 7: Notifications. A dashboard notification bell (header dropdown, unread badge, mark read / mark all read) fires on every new lead.

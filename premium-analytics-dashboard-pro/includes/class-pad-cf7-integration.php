@@ -116,6 +116,8 @@ class PAD_CF7_Integration {
 		);
 
 		PAD_Notifications::notify_new_lead( $lead_id, $contact_form->title(), trim( $structured['first_name'] . ' ' . $structured['last_name'] ) );
+
+		PAD_Cache::bump_version();
 	}
 
 	/**

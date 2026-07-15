@@ -39,6 +39,7 @@ function pad_uninstall_cleanup_site() {
 			'pad_visitors',
 			'pad_forms',
 			'pad_logs',
+			'pad_notifications',
 		);
 
 		foreach ( $tables as $table ) {
@@ -49,6 +50,12 @@ function pad_uninstall_cleanup_site() {
 
 		delete_option( 'pad_settings' );
 		delete_option( 'pad_db_version' );
+		delete_option( 'pad_api_key' );
+		delete_option( 'pad_cache_version' );
+
+		// Leftover cache transients bhi saaf kar dete hain.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-time uninstall cleanup, not a runtime query.
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_pad\_c\_%' OR option_name LIKE '\_transient\_timeout\_pad\_c\_%'" );
 	}
 
 	// Custom roles hamesha clean karte hain, data delete ho ya na ho.

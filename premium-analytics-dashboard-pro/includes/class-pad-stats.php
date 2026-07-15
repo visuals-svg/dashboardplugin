@@ -20,42 +20,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PAD_Stats {
 
 	/**
-	 * Diye gaye period ke andar aaye leads ki count.
+	 * Diye gaye period ke andar aaye leads ki count. 5 minute tak
+	 * cache hoti hai — naya lead capture/delete hone par PAD_Cache
+	 * version bump se turant invalidate ho jaati hai.
 	 *
 	 * @param string $period today|yesterday|week|month|year|all.
 	 * @return int
 	 */
 	public static function get_leads_count( $period = 'all' ) {
-		global $wpdb;
 
-		$table = PAD_Database::table( 'leads' );
+		return (int) PAD_Cache::remember(
+			'leads_count_' . $period,
+			5 * MINUTE_IN_SECONDS,
+			function () use ( $period ) {
+				global $wpdb;
 
-		if ( 'all' === $period ) {
-			return (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table}" );
-		}
+				$table = PAD_Database::table( 'leads' );
 
-		$range = PAD_Helper::get_date_range( $period );
+				if ( 'all' === $period ) {
+					return (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table}" );
+				}
 
-		return (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(id) FROM {$table} WHERE created_at BETWEEN %s AND %s",
-				$range['start'],
-				$range['end']
-			)
+				$range = PAD_Helper::get_date_range( $period );
+
+				return (int) $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT COUNT(id) FROM {$table} WHERE created_at BETWEEN %s AND %s",
+						$range['start'],
+						$range['end']
+					)
+				);
+			}
 		);
 	}
 
 	/**
-	 * Ab tak track kiye gaye total unique visitors.
+	 * Ab tak track kiye gaye total unique visitors. Visitor tracking
+	 * high-frequency hai, is liye version-bump se invalidate nahi
+	 * karte — sirf ek chhoti fixed TTL (natural staleness window,
+	 * jaisa zyada tar analytics dashboards me hota hai).
 	 *
 	 * @return int
 	 */
 	public static function get_total_visitors() {
-		global $wpdb;
 
-		$table = PAD_Database::table( 'visitors' );
-
-		return (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table}" );
+		return (int) PAD_Cache::remember(
+			'total_visitors',
+			3 * MINUTE_IN_SECONDS,
+			function () {
+				global $wpdb;
+				return (int) $wpdb->get_var( 'SELECT COUNT(id) FROM ' . PAD_Database::table( 'visitors' ) );
+			}
+		);
 	}
 
 	/**
@@ -103,13 +119,18 @@ class PAD_Stats {
 	 * @return int
 	 */
 	public static function get_average_session_duration() {
-		global $wpdb;
 
-		$table = PAD_Database::table( 'sessions' );
+		return (int) PAD_Cache::remember(
+			'avg_session_duration',
+			3 * MINUTE_IN_SECONDS,
+			function () {
+				global $wpdb;
 
-		$average = $wpdb->get_var( "SELECT AVG(duration) FROM {$table} WHERE ended_at IS NOT NULL" );
+				$average = $wpdb->get_var( 'SELECT AVG(duration) FROM ' . PAD_Database::table( 'sessions' ) . ' WHERE ended_at IS NOT NULL' );
 
-		return null === $average ? 0 : (int) round( (float) $average );
+				return null === $average ? 0 : (int) round( (float) $average );
+			}
+		);
 	}
 
 	/**
@@ -118,19 +139,25 @@ class PAD_Stats {
 	 * @return float
 	 */
 	public static function get_bounce_rate() {
-		global $wpdb;
 
-		$table = PAD_Database::table( 'sessions' );
+		return (float) PAD_Cache::remember(
+			'bounce_rate',
+			3 * MINUTE_IN_SECONDS,
+			function () {
+				global $wpdb;
 
-		$total = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table}" );
+				$table = PAD_Database::table( 'sessions' );
+				$total = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table}" );
 
-		if ( $total <= 0 ) {
-			return 0.0;
-		}
+				if ( $total <= 0 ) {
+					return 0.0;
+				}
 
-		$bounced = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table} WHERE is_bounce = 1" );
+				$bounced = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table} WHERE is_bounce = 1" );
 
-		return round( ( $bounced / $total ) * 100, 2 );
+				return round( ( $bounced / $total ) * 100, 2 );
+			}
+		);
 	}
 
 	/**

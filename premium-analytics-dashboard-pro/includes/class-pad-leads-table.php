@@ -535,6 +535,8 @@ class PAD_Leads_Table {
 			count( $ids )
 		) );
 
+		PAD_Cache::bump_version();
+
 		return (int) $deleted;
 	}
 }
