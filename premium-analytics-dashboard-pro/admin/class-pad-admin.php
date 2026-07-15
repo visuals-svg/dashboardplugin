@@ -220,17 +220,22 @@ class PAD_Admin {
 					'noNotes'          => __( 'Abhi tak koi note nahi hai.', 'premium-analytics-dashboard-pro' ),
 					'confirmDelete'    => __( 'Kya aap is lead ko delete karna chahte hain?', 'premium-analytics-dashboard-pro' ),
 					'confirmBulkDelete' => __( 'Kya aap selected leads ko delete karna chahte hain?', 'premium-analytics-dashboard-pro' ),
+					'leadsTrend'       => __( 'Leads Trend', 'premium-analytics-dashboard-pro' ),
+					'leadsByStatus'    => __( 'Leads by Status', 'premium-analytics-dashboard-pro' ),
+					'leadsByForm'      => __( 'Leads by Form', 'premium-analytics-dashboard-pro' ),
+					'leadsByCountry'   => __( 'Leads by Country', 'premium-analytics-dashboard-pro' ),
+					'trafficSources'   => __( 'Traffic Sources', 'premium-analytics-dashboard-pro' ),
 				),
 			)
 		);
 
-		// ApexCharts (vendored locally) sirf Dashboard aur Analytics par —
-		// 500KB+ ki library baaki 7 pages par load karne ki zaroorat nahi.
-		$is_chart_page = ( false !== strpos( $hook_suffix, 'toplevel_page_' . self::MENU_SLUG ) )
+		// ApexCharts (vendored locally) sirf un pages par jinhe charts chahiye —
+		// 500KB+ ki library baaki pages par load karne ki zaroorat nahi.
+		$is_dashboard_or_analytics = ( false !== strpos( $hook_suffix, 'toplevel_page_' . self::MENU_SLUG ) )
 			|| ( false !== strpos( $hook_suffix, 'pad-analytics' ) );
+		$is_reports_page           = false !== strpos( $hook_suffix, 'pad-reports' );
 
-		if ( $is_chart_page ) {
-
+		if ( $is_dashboard_or_analytics || $is_reports_page ) {
 			wp_enqueue_script(
 				'pad-apexcharts',
 				PAD_PLUGIN_URL . 'assets/js/vendor/apexcharts.min.js',
@@ -238,10 +243,22 @@ class PAD_Admin {
 				'3.54.1',
 				true
 			);
+		}
 
+		if ( $is_dashboard_or_analytics ) {
 			wp_enqueue_script(
 				'pad-charts',
 				PAD_PLUGIN_URL . 'assets/js/pad-charts.js',
+				array( 'pad-admin', 'pad-apexcharts' ),
+				PAD_VERSION,
+				true
+			);
+		}
+
+		if ( $is_reports_page ) {
+			wp_enqueue_script(
+				'pad-reports',
+				PAD_PLUGIN_URL . 'assets/js/pad-reports.js',
 				array( 'pad-admin', 'pad-apexcharts' ),
 				PAD_VERSION,
 				true

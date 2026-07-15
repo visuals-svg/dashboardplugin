@@ -109,11 +109,147 @@ class PAD_PDF_Writer {
 			$chunks = array( array() );
 		}
 
-		$page_count = count( $chunks );
+		$page_streams = array();
+
+		foreach ( $chunks as $index => $chunk ) {
+			$page_streams[] = $this->build_page_stream( $title, $headers, $col_widths, $chunk, 0 === $index );
+		}
+
+		return $this->serialize( $this->objects_from_page_streams( $page_streams ) );
+	}
+
+	/**
+	 * Ek document ko seedha download karwata hai jismein multiple
+	 * sections ho sakte hain (heading + table, ya heading + plain
+	 * text lines) — Reports jaisi multi-section PDFs ke liye.
+	 *
+	 * @param string $title    Document title.
+	 * @param array  $sections Har section: array{ heading:string, headers?:string[], widths?:int[], rows:array }.
+	 *                          Agar 'headers' set nahi hai to 'rows' ki har entry ek plain text line maani jaati hai.
+	 * @param string $filename Download filename.
+	 * @return void
+	 */
+	public function download_sections( $title, $sections, $filename ) {
+
+		$pdf_bytes = $this->build_sections( $title, $sections );
+
+		nocache_headers();
+		header( 'Content-Type: application/pdf' );
+		header( 'Content-Disposition: attachment; filename="' . sanitize_file_name( $filename ) . '"' );
+		header( 'Content-Length: ' . strlen( $pdf_bytes ) );
+
+		echo $pdf_bytes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- raw binary PDF bytes, not HTML.
+		exit;
+	}
+
+	/**
+	 * Multi-section document ke raw PDF bytes banata hai — headings,
+	 * tables aur plain-text paragraphs ko ek continuous, page-breaking
+	 * flow me arrange karta hai.
+	 *
+	 * @param string $title    Document title.
+	 * @param array  $sections Sections list (dekhein download_sections()).
+	 * @return string
+	 */
+	private function build_sections( $title, $sections ) {
+
+		$page_streams = array();
+		$parts        = array( 'BT', "/F1 {$this->font_size} Tf" );
+		$y            = $this->page_height - $this->margin;
+
+		$parts[] = "/F1 {$this->title_font_size} Tf";
+		$parts[] = "1 0 0 1 {$this->margin} {$y} Tm";
+		$parts[] = '(' . $this->escape( $title ) . ') Tj';
+		$parts[] = "/F1 {$this->font_size} Tf";
+		$y      -= 26;
+
+		$ensure_space = function ( $needed ) use ( &$y, &$parts, &$page_streams ) {
+
+			if ( $y - $needed < $this->margin ) {
+				$parts[] = 'ET';
+				$page_streams[] = implode( "\n", $parts );
+				$parts = array( 'BT', "/F1 {$this->font_size} Tf" );
+				$y     = $this->page_height - $this->margin;
+			}
+		};
+
+		foreach ( $sections as $section ) {
+
+			$ensure_space( $this->line_height * 2 );
+
+			$parts[] = "/F1 " . ( $this->font_size + 2 ) . ' Tf';
+			$parts[] = "1 0 0 1 {$this->margin} {$y} Tm";
+			$parts[] = '(' . $this->escape( $section['heading'] ) . ') Tj';
+			$parts[] = "/F1 {$this->font_size} Tf";
+			$y      -= $this->line_height + 4;
+
+			$headers = isset( $section['headers'] ) ? $section['headers'] : array();
+			$widths  = isset( $section['widths'] ) ? $section['widths'] : array();
+
+			if ( ! empty( $headers ) ) {
+
+				$ensure_space( $this->line_height );
+
+				$x = $this->margin;
+
+				foreach ( $headers as $index => $header ) {
+					$parts[] = "1 0 0 1 {$x} {$y} Tm";
+					$parts[] = '(' . $this->escape( strtoupper( $header ) ) . ') Tj';
+					$x      += isset( $widths[ $index ] ) ? $widths[ $index ] : 100;
+				}
+
+				$y -= $this->line_height;
+			}
+
+			foreach ( $section['rows'] as $row ) {
+
+				$ensure_space( $this->line_height );
+
+				if ( ! empty( $headers ) ) {
+
+					$x = $this->margin;
+
+					foreach ( (array) $row as $index => $cell ) {
+						$width     = isset( $widths[ $index ] ) ? $widths[ $index ] : 100;
+						$max_chars = max( 4, (int) floor( $width / ( $this->font_size * 0.55 ) ) );
+						$text      = $this->truncate( (string) $cell, $max_chars );
+
+						$parts[] = "1 0 0 1 {$x} {$y} Tm";
+						$parts[] = '(' . $this->escape( $text ) . ') Tj';
+						$x      += $width;
+					}
+				} else {
+					$parts[] = "1 0 0 1 {$this->margin} {$y} Tm";
+					$parts[] = '(' . $this->escape( (string) $row ) . ') Tj';
+				}
+
+				$y -= $this->line_height;
+			}
+
+			$y -= 10;
+		}
+
+		$parts[]        = 'ET';
+		$page_streams[] = implode( "\n", $parts );
+
+		return $this->serialize( $this->objects_from_page_streams( $page_streams ) );
+	}
+
+	/**
+	 * Page content-streams ki list se PDF objects array (Catalog,
+	 * Pages, Font, har page + uska content stream) banata hai —
+	 * single-table aur multi-section, dono renderers isi ko share karte hain.
+	 *
+	 * @param string[] $page_streams Har page ka content stream.
+	 * @return array
+	 */
+	private function objects_from_page_streams( $page_streams ) {
+
+		$page_count = count( $page_streams );
 
 		$objects = array();
+		$kids    = array();
 
-		$kids = array();
 		for ( $k = 0; $k < $page_count; $k++ ) {
 			$kids[] = ( 4 + ( 2 * $k ) ) . ' 0 R';
 		}
@@ -127,13 +263,11 @@ class PAD_PDF_Writer {
 			$page_id    = 4 + ( 2 * $k );
 			$content_id = 5 + ( 2 * $k );
 
-			$stream = $this->build_page_stream( $title, $headers, $col_widths, $chunks[ $k ], 0 === $k );
-
 			$objects[ $page_id ]    = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . $this->page_width . ' ' . $this->page_height . '] /Resources << /Font << /F1 3 0 R >> >> /Contents ' . $content_id . ' 0 R >>';
-			$objects[ $content_id ] = array( 'stream' => $stream );
+			$objects[ $content_id ] = array( 'stream' => $page_streams[ $k ] );
 		}
 
-		return $this->serialize( $objects );
+		return $objects;
 	}
 
 	/**

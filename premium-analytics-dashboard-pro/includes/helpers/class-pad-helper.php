@@ -46,9 +46,9 @@ class PAD_Helper {
 
 	/**
 	 * Site ki configured timezone ke hisaab se ek named period
-	 * (today, yesterday, week, month, year) ka start/end datetime deta hai.
+	 * (today, yesterday, week, month, quarter, year) ka start/end datetime deta hai.
 	 *
-	 * @param string $period today|yesterday|week|month|year.
+	 * @param string $period today|yesterday|week|month|quarter|year.
 	 * @return array{start: string, end: string}
 	 */
 	public static function get_date_range( $period ) {
@@ -77,6 +77,13 @@ class PAD_Helper {
 
 			case 'year':
 				$start->modify( 'first day of january this year' )->setTime( 0, 0, 0 );
+				$end->setTime( 23, 59, 59 );
+				break;
+
+			case 'quarter':
+				$current_quarter = (int) ceil( (int) $now->format( 'n' ) / 3 );
+				$start_month      = ( ( $current_quarter - 1 ) * 3 ) + 1;
+				$start->setDate( (int) $now->format( 'Y' ), $start_month, 1 )->setTime( 0, 0, 0 );
 				$end->setTime( 23, 59, 59 );
 				break;
 

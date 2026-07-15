@@ -39,6 +39,7 @@ class PAD_Plugin {
 		$this->define_form_tracking_hooks();
 		$this->define_visitor_tracking_hooks();
 		$this->define_leads_management_hooks();
+		$this->define_reports_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -118,6 +119,21 @@ class PAD_Plugin {
 		$this->loader->add_action( 'admin_post_pad_export_leads_excel', $export, 'export_excel' );
 		$this->loader->add_action( 'admin_post_pad_export_leads_pdf', $export, 'export_pdf' );
 		$this->loader->add_action( 'admin_post_pad_print_leads', $export, 'print_view' );
+	}
+
+	/**
+	 * Report generation (AJAX) aur PDF/CSV export (admin-post) hooks register karta hai.
+	 *
+	 * @return void
+	 */
+	private function define_reports_hooks() {
+
+		$reports = new PAD_Reports();
+		$this->loader->add_action( 'wp_ajax_pad_generate_report', $reports, 'ajax_generate' );
+
+		$export = new PAD_Reports_Export();
+		$this->loader->add_action( 'admin_post_pad_export_reports_pdf', $export, 'export_pdf' );
+		$this->loader->add_action( 'admin_post_pad_export_reports_csv', $export, 'export_csv' );
 	}
 
 	/**

@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,10 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.5.0 =
+* Phase 6: Full Reports generation — Daily, Weekly, Monthly, Quarterly, Yearly and Custom Date Range, each producing a complete business report (leads by status/form/country, visitor/session/pageview totals, average session duration, bounce rate, conversion rate, traffic sources, and a leads trend chart).
+* Export the generated report to PDF (multi-section, via the same dependency-free PDF writer introduced in Phase 5, now extended to flow across headings/tables/paragraphs and page breaks) or CSV.
 
 = 1.4.0 =
 * Phase 5: Advanced Lead Management. The Leads page is now a fully AJAX-driven data table: live search, sortable columns, pagination, and filters (status, country, form, date range).
