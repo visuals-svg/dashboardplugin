@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,9 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 2.0.1 =
+* Fix (found via live testing on a real site): Contact Form 7 field-name heuristics now also check each field's `placeholder` text, not just its programmatic name. Many real-world CF7 forms use auto-generated field names (e.g. "text-214") that carry no semantic meaning — only their placeholder ("First Name", "Enter City Name") does. First name, last name, city and state now map correctly on such forms instead of only being captured as unlabeled custom fields.
 
 = 2.0.0 =
 * Phase 8 (final): Settings completion — API Settings (a read-only REST API under `pad/v1/leads` and `pad/v1/stats`, secured by a regenerable API key) and Backup & Restore (a downloadable JSON backup of Settings/Forms/Tags/Leads with dynamic fields, notes and tags; restore is always additive and never overwrites or deletes existing data).

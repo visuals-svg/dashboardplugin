@@ -160,8 +160,17 @@ class PAD_CF7_Integration {
 			}
 
 			$basetype  = $tag->basetype;
-			$lower     = strtolower( $name );
 			$sanitized = sanitize_text_field( $raw_value );
+
+			// Kai real-world CF7 forms me field ka `name` khud CF7 se
+			// auto-generate hota hai (jaise "text-214") aur usme koi
+			// semantic hint nahi hoti — sirf field ka `placeholder`
+			// ("First Name", "Enter City Name") me asli meaning hoti hai.
+			// Is liye hum dono ko mila kar search karte hain.
+			$placeholder = $tag->get_option( 'placeholder', '.*', true );
+			$placeholder = is_array( $placeholder ) ? reset( $placeholder ) : $placeholder;
+			$placeholder = is_string( $placeholder ) ? trim( $placeholder, " \t\n\r\0\x0B\"'" ) : '';
+			$lower       = strtolower( $name . ' ' . $placeholder );
 
 			if ( 'email' === $basetype && '' === $result['email'] ) {
 				$result['email'] = sanitize_email( $raw_value );
