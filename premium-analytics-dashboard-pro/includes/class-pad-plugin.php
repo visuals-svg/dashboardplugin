@@ -38,6 +38,7 @@ class PAD_Plugin {
 		$this->define_admin_hooks();
 		$this->define_form_tracking_hooks();
 		$this->define_visitor_tracking_hooks();
+		$this->define_leads_management_hooks();
 		$this->define_cron_hooks();
 	}
 
@@ -90,6 +91,33 @@ class PAD_Plugin {
 	private function define_form_tracking_hooks() {
 		$cf7 = new PAD_CF7_Integration();
 		$this->loader->add_action( 'wpcf7_before_send_mail', $cf7, 'capture_submission', 10, 1 );
+	}
+
+	/**
+	 * Leads table (search/sort/filter/pagination/notes/tags/status/delete)
+	 * aur exports (CSV/Excel/PDF/Print) ke hooks register karta hai.
+	 *
+	 * @return void
+	 */
+	private function define_leads_management_hooks() {
+
+		$table = new PAD_Leads_Table();
+
+		$this->loader->add_action( 'wp_ajax_pad_leads_list', $table, 'ajax_list' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_detail', $table, 'ajax_detail' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_update_status', $table, 'ajax_update_status' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_add_note', $table, 'ajax_add_note' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_add_tag', $table, 'ajax_add_tag' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_remove_tag', $table, 'ajax_remove_tag' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_delete', $table, 'ajax_delete' );
+		$this->loader->add_action( 'wp_ajax_pad_lead_bulk_delete', $table, 'ajax_bulk_delete' );
+
+		$export = new PAD_Leads_Export();
+
+		$this->loader->add_action( 'admin_post_pad_export_leads_csv', $export, 'export_csv' );
+		$this->loader->add_action( 'admin_post_pad_export_leads_excel', $export, 'export_excel' );
+		$this->loader->add_action( 'admin_post_pad_export_leads_pdf', $export, 'export_pdf' );
+		$this->loader->add_action( 'admin_post_pad_print_leads', $export, 'print_view' );
 	}
 
 	/**

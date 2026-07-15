@@ -4,7 +4,7 @@ Tags: analytics, leads, contact form 7, dashboard, visitor tracking
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,12 @@ No. Deactivation never touches your data. Data is only removed on uninstall (plu
 Yes. Each site in the network gets its own set of tables, created automatically on activation and on new site creation.
 
 == Changelog ==
+
+= 1.4.0 =
+* Phase 5: Advanced Lead Management. The Leads page is now a fully AJAX-driven data table: live search, sortable columns, pagination, and filters (status, country, form, date range).
+* Inline lead status changes, a slide-over detail panel showing every captured field plus dynamic custom fields, notes, and tags (add/remove).
+* Delete and bulk-delete with capability checks.
+* Export to CSV, Export to Excel (opens natively in Excel/Sheets), Export to PDF (rendered by a small hand-written PDF generator with zero external libraries — see includes/class-pad-pdf-writer.php), and a print-friendly view — all four honor whatever filters are currently applied on screen.
 
 = 1.3.0 =
 * Phase 4: Interactive charts, powered by ApexCharts (vendored locally under assets/js/vendor — no CDN, no external request at runtime).

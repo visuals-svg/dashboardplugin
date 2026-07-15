@@ -203,6 +203,24 @@ class PAD_Admin {
 				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
 				'nonce'     => wp_create_nonce( 'pad_admin_nonce' ),
 				'themeMode' => $settings['theme_mode'],
+				'strings'   => array(
+					'loading'          => __( 'Loading…', 'premium-analytics-dashboard-pro' ),
+					'noLeads'          => __( 'Koi lead is filter ke saath nahi mila.', 'premium-analytics-dashboard-pro' ),
+					'view'             => __( 'View', 'premium-analytics-dashboard-pro' ),
+					'deleteLabel'      => __( 'Delete', 'premium-analytics-dashboard-pro' ),
+					'page'             => __( 'Page', 'premium-analytics-dashboard-pro' ),
+					'selected'         => __( 'selected', 'premium-analytics-dashboard-pro' ),
+					'leadDetails'      => __( 'Lead Details', 'premium-analytics-dashboard-pro' ),
+					'customFields'     => __( 'Custom Fields', 'premium-analytics-dashboard-pro' ),
+					'tags'             => __( 'Tags', 'premium-analytics-dashboard-pro' ),
+					'addTag'           => __( 'Add a tag…', 'premium-analytics-dashboard-pro' ),
+					'notes'            => __( 'Notes', 'premium-analytics-dashboard-pro' ),
+					'addNote'          => __( 'Write a note…', 'premium-analytics-dashboard-pro' ),
+					'save'             => __( 'Save', 'premium-analytics-dashboard-pro' ),
+					'noNotes'          => __( 'Abhi tak koi note nahi hai.', 'premium-analytics-dashboard-pro' ),
+					'confirmDelete'    => __( 'Kya aap is lead ko delete karna chahte hain?', 'premium-analytics-dashboard-pro' ),
+					'confirmBulkDelete' => __( 'Kya aap selected leads ko delete karna chahte hain?', 'premium-analytics-dashboard-pro' ),
+				),
 			)
 		);
 
@@ -225,6 +243,16 @@ class PAD_Admin {
 				'pad-charts',
 				PAD_PLUGIN_URL . 'assets/js/pad-charts.js',
 				array( 'pad-admin', 'pad-apexcharts' ),
+				PAD_VERSION,
+				true
+			);
+		}
+
+		if ( false !== strpos( $hook_suffix, 'pad-leads' ) ) {
+			wp_enqueue_script(
+				'pad-leads',
+				PAD_PLUGIN_URL . 'assets/js/pad-leads.js',
+				array( 'pad-admin' ),
 				PAD_VERSION,
 				true
 			);
