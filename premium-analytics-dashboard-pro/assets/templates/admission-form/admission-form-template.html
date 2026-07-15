@@ -1,0 +1,656 @@
+<!--
+  Student Admission - Multi Step Form (Contact Form 7)
+  ------------------------------------------------------
+  Isko poora copy karke WordPress > Contact > apna form > "Form" tab me
+  paste kar dein (jahan CF7 ke [square-bracket] tags likhte hain).
+  Style aur script yahi ke andar hain, alag se enqueue karne ki zaroorat nahi.
+
+  Is version me 2 fixes hain:
+  1) Step 3 "Same as Above" checkbox - tick karne par Postal Address ke
+     saare fields turant Communication Address se copy ho jaate hain aur
+     lock (read-only) ho jaate hain. Untick karne par woh clear ho kar
+     wapas editable ho jaate hain.
+  2) Step 7 (Declaration) - checkbox + text, Cloudflare Turnstile widget
+     aur Submit button ab properly stacked/spaced dikhte hain (pehle
+     overlap ho rahe the kyunki grid layout ki wajah se panel ek narrow
+     column me sikud raha tha).
+-->
+<style>
+  .cf7-multi-form .cf7-step[data-step="7"] {
+    display: block;
+  }
+
+  .cf7-multi-form .declaration-panel {
+    grid-column: 1 / -1;
+    max-width: 720px;
+  }
+
+  .cf7-multi-form .declaration-support {
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+
+  .cf7-multi-form .declaration-checkbox {
+    grid-column: 1 / -1;
+    margin: 0 0 24px;
+  }
+
+  .cf7-multi-form .declaration-checkbox .wpcf7-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .cf7-multi-form .declaration-checkbox input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin: 3px 0 0;
+    cursor: pointer;
+  }
+
+  .cf7-multi-form .declaration-checkbox .wpcf7-list-item-label {
+    flex: 1 1 auto;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .cf7-multi-form .cf7-step[data-step="7"] .cf-turnstile,
+  .cf7-multi-form .cf7-step[data-step="7"] .wpcf7-form-control-wrap {
+    display: block;
+    grid-column: 1 / -1;
+    clear: both;
+    margin: 0 0 20px;
+  }
+
+  .cf7-multi-form .cf7-step[data-step="7"] input[type="submit"],
+  .cf7-multi-form .cf7-step[data-step="7"] #admission-submit {
+    display: inline-block;
+    grid-column: 1 / -1;
+    clear: both;
+    margin-top: 4px;
+  }
+</style>
+
+<div class="cf7-multi-form">
+<div class="cf7-stepper">
+  <div class="stepper-item active" data-step-target="1"><span>1</span><b>Student Detail</b></div>
+  <div class="stepper-item" data-step-target="2"><span>2</span><b>Parents Details</b></div>
+  <div class="stepper-item" data-step-target="3"><span>3</span><b>Communication Address</b></div>
+  <div class="stepper-item" data-step-target="4"><span>4</span><b>Guardian Details</b></div>
+  <div class="stepper-item" data-step-target="5"><span>5</span><b>Academic Information</b></div>
+  <div class="stepper-item" data-step-target="6"><span>6</span><b>Documents</b></div>
+  <div class="stepper-item" data-step-target="7"><span>7</span><b>Declaration</b></div>
+</div>
+
+  <div class="cf7-step active" data-step="1">
+    <h3>Step 1 - Student Details</h3>
+
+    <label>Academic Year * [select* select-150 id:academic-year academic-year "2026-2027" "2027-2028"]</label>
+    <label>Current City * [text* text-964 id:current-city current-city]</label>
+    <label>Student First Name * [text* text-763 id:student-first-name student-first-name]</label>
+    <label>Student Last Name * [text* text-71 id:student-last-name student-last-name]</label>
+    <label>Date of Birth * [date* date-861 id:student-dob student-dob]</label>
+    <label>Gender * [select* select-659 id:student-gender student-gender "Boy" "Girl"]</label>
+
+    <label>Grade * [select* select-162 id:student-grade student-grade "Nursery" "KG1/LKG" "KG2/UKG" "Grade 1" "Grade 2" "Grade 3" "Grade 4" "Grade 5" "Grade 6" "Grade 7" "Grade 8" "Grade 9" "Grade 10" "Grade 11" "Grade 12"]</label>
+
+    <label>Curriculum * [select* select-429 id:student-curriculum student-curriculum "Indian Curriculum" "British Curriculum" ]</label>
+
+
+
+
+<label>Sibling
+  [select select-498 id:sibling-count sibling-count "Select" "1" "2" "3" "4"]
+</label>
+
+
+    <div class="siblings-wrap">
+      <!-- Repeat 4 sibling blocks -->
+      <div class="sibling-block" data-sibling="1">
+        <h4>Sibling 1</h4>
+        <label>First Name [text text-222 id:sibling1-first-name sibling1-first-name]</label>
+        <label>Last Name [text text-336 id:sibling1-last-name sibling1-last-name]</label>
+        <label>Date of Birth [date date-764 id:sibling1-dob sibling1-dob]</label>
+        <label>Gender [select select-984 id:sibling1-gender sibling1-gender "Male" "Female" "Other"]</label>
+
+   <label>Grade  [select* select-694 id:sibling1-grade sibling1-grade "Nursery" "KG1/LKG" "KG2/UKG" "Grade 1" "Grade 2" "Grade 3" "Grade 4" "Grade 5" "Grade 6" "Grade 7" "Grade 8" "Grade 9" "Grade 10" "Grade 11" "Grade 12"]</label>
+
+        <label>Curriculum [select select-858 id:sibling1-curriculum sibling1-curriculum "Indian Curriculum" "British Curriculum" ]</label>
+
+      </div>
+
+      <div class="sibling-block" data-sibling="2">
+        <h4>Sibling 2</h4>
+        <label>First Name [text text-878 id:sibling2-first-name sibling2-first-name]</label>
+        <label>Last Name [text text-103 id:sibling2-last-name sibling2-last-name]</label>
+        <label>Date of Birth [date date-508 id:sibling2-dob sibling2-dob]</label>
+        <label>Gender [select select-391 id:sibling2-gender sibling2-gender "Boy" "Girl"]</label>
+
+        <label>Grade [select select-17 id:sibling2-grade sibling2-grade "Nursery" "KG1/LKG" "KG2/UKG" "Grade 1" "Grade 2" "Grade 3" "Grade 4" "Grade 5" "Grade 6" "Grade 7" "Grade 8" "Grade 9" "Grade 10" "Grade 11" "Grade 12"]</label>
+
+        <label>Curriculum [select select-663 id:sibling2-curriculum sibling2-curriculum "Indian Curriculum" "British Curriculum" ]</label>
+
+      </div>
+
+      <div class="sibling-block" data-sibling="3">
+        <h4>Sibling 3</h4>
+        <label>First Name [text text-290 id:sibling3-first-name sibling3-first-name]</label>
+        <label>Last Name [text text-111 id:sibling3-last-name sibling3-last-name]</label>
+        <label>Date of Birth [date date-239 id:sibling3-dob sibling3-dob]</label>
+        <label>Gender [select select-206 id:sibling3-gender sibling3-gender "Boy" "Girl"]</label>
+
+        <label>Grade [select select-171 id:sibling3-grade sibling3-grade "Nursery" "KG1/LKG" "KG2/UKG" "Grade 1" "Grade 2" "Grade 3" "Grade 4" "Grade 5" "Grade 6" "Grade 7" "Grade 8" "Grade 9" "Grade 10" "Grade 11" "Grade 12"]</label>
+
+
+        <label>Curriculum [select select-547 id:sibling3-curriculum sibling3-curriculum "Indian Curriculum" "British Curriculum" ]</label>
+
+      </div>
+
+      <div class="sibling-block" data-sibling="4">
+        <h4>Sibling 4</h4>
+        <label>First Name [text text-787 id:sibling4-first-name sibling4-first-name]</label>
+        <label>Last Name [text text-964 id:sibling4-last-name sibling4-last-name]</label>
+        <label>Date of Birth [date date-840 id:sibling4-dob sibling4-dob]</label>
+        <label>Gender [select select-857 id:sibling4-gender sibling4-gender "Boy" "Girl" "Other"]</label>
+
+
+        <label>Grade [select select-677 id:sibling4-grade sibling4-grade "Nursery" "KG1/LKG" "KG2/UKG" "Grade 1" "Grade 2" "Grade 3" "Grade 4" "Grade 5" "Grade 6" "Grade 7" "Grade 8" "Grade 9" "Grade 10" "Grade 11" "Grade 12"]</label>
+        <label>Curriculum [select select-419 id:sibling4-curriculum sibling4-curriculum "Indian Curriculum" "British Curriculum"]</label>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="cf7-step" data-step="2">
+    <h3>Step 2 - Parents Details</h3>
+
+    <label>Religion * [text* text-245 id:religion religion]</label>
+    <label>Nationality * [text* text-87 id:nationality nationality]</label>
+
+    <h4>Father</h4>
+    <label>Father Name * [text* text-630 id:father-name father-name]</label>
+    <label>Father Phone * [tel* text-103 id:father-phone father-phone]</label>
+    <label>Father Email * [email* text-58 id:father-email father-email]</label>
+    <label>Father Occupation * [select* select-508 id:father-occupation father-occupation first_as_label "Select" "Defence Personnel" "Entrepreneur" "Ex-Serviceman" "Private Sector Employee" "Public Sector Employee" "Retired" "Self-employed" "Unemployed"]</label>
+
+
+    <h4>Mother</h4>
+    <label>Mother Name * [text* text-904 id:mother-name mother-name]</label>
+    <label>Mother Phone * [tel* text-784 id:mother-phone mother-phone]</label>
+    <label>Mother Email * [email* text-431 id:mother-email mother-email]</label>
+
+
+
+   <label>Mother Occupation * [select* select-290 id:mother-occupation mother-occupation first_as_label "Select" "Housewife" "Defence Personnel" "Entrepreneur" "Ex-Serviceman" "Private Sector Employee" "Public Sector Employee" "Retired" "Self-employed" "Unemployed"]</label>
+
+
+  </div>
+
+  <div class="cf7-step" data-step="3">
+    <h3>Step 3 - Communication Address</h3>
+
+    <label>Address Line 1 * [text* text-555 id:comm-address1 comm-address1]</label>
+    <label>Address Line 2 [text text-334 id:comm-address2 comm-address2]</label>
+    <label>City * [text* text-147 id:comm-city comm-city]</label>
+    <label>State / Province * [text* text-455 id:comm-state comm-state]</label>
+    <label>Postal Code * [text* text-8 id:comm-postal comm-postal]</label>
+    <label>Country * [text* text-755 id:comm-country comm-country]</label>
+
+    <h4>Postal Address</h4>
+    <label class="checkbox-label">[checkbox same-as-above id:same-as-above use_label_element "Same as Above"]</label>
+
+
+    <div class="postal-address">
+      <label>Address Line 1 [text text-766 id:postal-address1 postal-address1]</label>
+      <label>Address Line 2 [text text-852 id:postal-address2 postal-address2]</label>
+      <label>City [text text-281 id:postal-city postal-city]</label>
+      <label>State [text text-769 id:postal-state postal-state]</label>
+      <label>Postal Code [text text-253 id:postal-postal postal-postal]</label>
+      <label>Country [text text-546 id:postal-country postal-country]</label>
+    </div>
+  </div>
+
+  <div class="cf7-step" data-step="4">
+    <h3>Step 4 - Guardian Details</h3>
+
+    <label>Guardian Full Name [text text-51 id:guardian-name guardian-name]</label>
+    <label>Guardian Email [email email-916 id:guardian-email guardian-email]</label>
+    <label>Guardian Phone [tel tel-15 id:guardian-phone guardian-phone]</label>
+
+    <h4>Guardian Address</h4>
+    <label>Address Line 1 [text text-531 id:guardian-address1 guardian-address1]</label>
+    <label>Address Line 2 [text text-347 id:guardian-address2 guardian-address2]</label>
+    <label>City [text text-260 id:guardian-city guardian-city]</label>
+    <label>State [text text-902 id:guardian-state guardian-state]</label>
+    <label>Postal Code [text text-864 id:guardian-postal guardian-postal]</label>
+    <label>Country [text text-17 id:guardian-country guardian-country]</label>
+
+    <label>Relation [select select-311 id:guardian-relation guardian-relation "Father" "Mother" "Grand Parent" "Uncle" "Aunt" "Other"]</label>
+  </div>
+
+ <div class="cf7-step" data-step="5">
+  <h3>Step 5 - Academic Information</h3>
+
+  <div class="academic-block active" data-academic-student="0">
+    <h4>Student Academic Information</h4>
+    <label>Student Name [text text-989 id:academic-student-name academic-student-name]</label>
+    <label>Last Grade Attended [text text-86 id:last-grade-attended last-grade-attended]</label>
+    <label>Name of Previous School [text text-702 id:previous-school previous-school]</label>
+    <label>Board of Affiliation [text text-12 id:board-affiliation board-affiliation]</label>
+  </div>
+
+  <div class="academic-block" data-academic-student="1">
+    <h4>Sibling 1 Academic Information</h4>
+    <label>Sibling 1 Name [text text-54 id:sibling1-academic-name sibling1-academic-name]</label>
+    <label>Sibling 1 Last Grade Attended [text text-521 id:sibling1-last-grade-attended sibling1-last-grade-attended]</label>
+    <label>Sibling 1 Previous School [text text-949 id:sibling1-previous-school sibling1-previous-school]</label>
+    <label>Sibling 1 Board of Affiliation [text text-414 id:sibling1-board-affiliation sibling1-board-affiliation]</label>
+  </div>
+
+  <div class="academic-block" data-academic-student="2">
+    <h4>Sibling 2 Academic Information</h4>
+    <label>Sibling 2 Name [text text-372 id:sibling2-academic-name sibling2-academic-name]</label>
+    <label>Sibling 2 Last Grade Attended [text text-102 id:sibling2-last-grade-attended sibling2-last-grade-attended]</label>
+    <label>Sibling 2 Previous School [text text-845 id:sibling2-previous-school sibling2-previous-school]</label>
+    <label>Sibling 2 Board of Affiliation [text text-618 id:sibling2-board-affiliation sibling2-board-affiliation]</label>
+  </div>
+
+  <div class="academic-block" data-academic-student="3">
+    <h4>Sibling 3 Academic Information</h4>
+    <label>Sibling 3 Name [text text-224 id:sibling3-academic-name sibling3-academic-name]</label>
+    <label>Sibling 3 Last Grade Attended [text text-500 id:sibling3-last-grade-attended sibling3-last-grade-attended]</label>
+    <label>Sibling 3 Previous School [text text-891 id:sibling3-previous-school sibling3-previous-school]</label>
+    <label>Sibling 3 Board of Affiliation [text text-857 id:sibling3-board-affiliation sibling3-board-affiliation]</label>
+  </div>
+
+  <div class="academic-block" data-academic-student="4">
+    <h4>Sibling 4 Academic Information</h4>
+    <label>Sibling 4 Name [text text-431 id:sibling4-academic-name sibling4-academic-name]</label>
+    <label>Sibling 4 Last Grade Attended [text text-390 id:sibling4-last-grade-attended sibling4-last-grade-attended]</label>
+    <label>Sibling 4 Previous School [text text-480 id:sibling4-previous-school sibling4-previous-school]</label>
+    <label>Sibling 4 Board of Affiliation [text text-332 id:sibling4-board-affiliation sibling4-board-affiliation]</label>
+  </div>
+
+  <label>Primary Contact *
+    [select* select-84 id:primary-contact primary-contact include_blank "Father" "Mother" "Legal Guardian"]
+
+  </label>
+</div>
+
+ <div class="cf7-step" data-step="6">
+  <h3>Step 6 - Documents Upload</h3>
+
+  <div class="cf7-full">
+    <h4>Preview - Step 1 to Step 5</h4>
+    <div id="cf7-preview-step6"></div>
+  </div>
+
+  <div class="student-doc-block active" data-doc-student="0">
+    <h4>Student 1 Required Documents</h4>
+    <label>Student Photo * [file* student-photo id:student-photo limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>ID Proof * [file* student-id-proof id:student-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Birth Certificate * [file* birth-certificate id:birth-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Previous Year Result * [file* previous-result id:previous-result limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Transfer Certificate [file transfer-certificate id:transfer-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  </div>
+
+  <div class="student-doc-block" data-doc-student="1">
+    <h4>Sibling 1 Required Documents</h4>
+    <label>Student Photo [file sibling1-photo id:sibling1-photo limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>ID Proof [file sibling1-id-proof id:sibling1-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Birth Certificate [file sibling1-birth-certificate id:sibling1-birth-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Previous Year Result [file sibling1-previous-result id:sibling1-previous-result limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Transfer Certificate [file sibling1-transfer-certificate id:sibling1-transfer-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  </div>
+
+  <div class="student-doc-block" data-doc-student="2">
+    <h4>Sibling 2 Required Documents</h4>
+    <label>Student Photo [file sibling2-photo id:sibling2-photo limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>ID Proof [file sibling2-id-proof id:sibling2-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Birth Certificate [file sibling2-birth-certificate id:sibling2-birth-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Previous Year Result [file sibling2-previous-result id:sibling2-previous-result limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Transfer Certificate [file sibling2-transfer-certificate id:sibling2-transfer-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  </div>
+
+  <div class="student-doc-block" data-doc-student="3">
+    <h4>Sibling 3 Required Documents</h4>
+    <label>Student Photo [file sibling3-photo id:sibling3-photo limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>ID Proof [file sibling3-id-proof id:sibling3-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Birth Certificate [file sibling3-birth-certificate id:sibling3-birth-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Previous Year Result [file sibling3-previous-result id:sibling3-previous-result limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Transfer Certificate [file sibling3-transfer-certificate id:sibling3-transfer-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  </div>
+
+  <div class="student-doc-block" data-doc-student="4">
+    <h4>Sibling 4 Required Documents</h4>
+    <label>Student Photo [file sibling4-photo id:sibling4-photo limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>ID Proof [file sibling4-id-proof id:sibling4-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Birth Certificate [file sibling4-birth-certificate id:sibling4-birth-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Previous Year Result [file sibling4-previous-result id:sibling4-previous-result limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+    <label>Transfer Certificate [file sibling4-transfer-certificate id:sibling4-transfer-certificate limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  </div>
+
+  <div class="cf7-full"><h4>Parents Documents</h4></div>
+
+  <label>Father Photo * [file* father-photo id:father-photo limit:5mb filetypes:jpg|jpeg|png]</label>
+  <label>Mother Photo * [file* mother-photo id:mother-photo limit:5mb filetypes:jpg|jpeg|png]</label>
+  <label>Father ID Proof * [file* father-id-proof id:father-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+  <label>Mother ID Proof * [file* mother-id-proof id:mother-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+
+  <div class="cf7-full"><h4>Optional Guardian Documents</h4></div>
+
+  <label>Guardian Photo [file guardian-photo id:guardian-photo limit:5mb filetypes:jpg|jpeg|png]</label>
+  <label>Guardian ID Proof [file guardian-id-proof id:guardian-id-proof limit:5mb filetypes:jpg|jpeg|png|pdf]</label>
+</div>
+  <div class="cf7-step" data-step="7">
+    <div class="declaration-panel">
+      <p class="declaration-support">In case of any query/support, please chat with us on WhatsApp <a href="https://wa.me/+919319238614">+91-9319 238 614</a> or email us at <a href="mailto:admissions@k12onlineschools.com">admissions@k12onlineschools.com</a>.</p>
+
+      <div class="checkbox-label declaration-checkbox">
+        [checkbox* declaration id:declaration class:navi-checkbox use_label_element "I hereby confirm that all the above information is authentic and correct."]
+      </div>
+    </div>
+
+    [submit id:admission-submit "Submit"]
+  </div>
+
+  <div class="cf7-nav">
+    <button type="button" class="cf7-prev">Previous</button>
+    <button type="button" class="cf7-next">Next</button>
+  </div>
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".cf7-multi-form").forEach(function (form) {
+    const steps = Array.from(form.querySelectorAll(".cf7-step"));
+    const stepper = Array.from(form.querySelectorAll(".stepper-item"));
+    const next = form.querySelector(".cf7-next");
+    const prev = form.querySelector(".cf7-prev");
+    let current = 0;
+
+    function field(key) {
+      return form.querySelector("#" + key) || form.querySelector('[name="' + key + '"]') || form.querySelector('[name="' + key + '[]"]');
+    }
+
+    const sibling = field("sibling-count");
+    const sameAddress = field("same-as-above");
+
+    function siblingCount() {
+      if (!sibling) return 0;
+      let count = parseInt(sibling.value, 10);
+      if (isNaN(count)) count = 0;
+      return Math.max(0, Math.min(4, count));
+    }
+
+    function showStep(index) {
+      if (index < 0 || index >= steps.length) return;
+
+      steps.forEach(function (step, i) {
+        step.classList.toggle("active", i === index);
+      });
+
+      stepper.forEach(function (item, i) {
+        item.classList.toggle("active", i === index);
+        item.classList.toggle("completed", i < index);
+      });
+
+      if (prev) prev.style.display = index === 0 ? "none" : "inline-flex";
+      if (next) next.style.display = index === steps.length - 1 ? "none" : "inline-flex";
+
+      current = index;
+      updateSiblingBlocks();
+      updateAcademic();
+      updateDocuments();
+
+      if (index === 5) buildPreview("#cf7-preview-step6");
+    }
+
+    stepper.forEach(function (item, i) {
+      item.addEventListener("click", function () {
+        if (i <= current) showStep(i);
+      });
+    });
+
+    function toggleBlock(block, active) {
+      block.classList.toggle("active", active);
+      block.style.display = active ? "grid" : "none";
+      block.querySelectorAll("input, select, textarea").forEach(function (input) {
+        input.disabled = !active;
+      });
+    }
+
+    function updateSiblingBlocks() {
+      const count = siblingCount();
+      form.querySelectorAll(".sibling-block").forEach(function (block) {
+        const num = parseInt(block.dataset.sibling, 10);
+        toggleBlock(block, num <= count);
+      });
+    }
+
+    function updateAcademic() {
+      const count = siblingCount();
+      form.querySelectorAll(".academic-block").forEach(function (block) {
+        const num = parseInt(block.dataset.academicStudent, 10);
+        toggleBlock(block, num === 0 || num <= count);
+      });
+    }
+
+    function updateDocuments() {
+      const count = siblingCount();
+      form.querySelectorAll(".student-doc-block").forEach(function (block) {
+        const num = parseInt(block.dataset.docStudent, 10);
+        toggleBlock(block, num === 0 || num <= count);
+      });
+    }
+
+    function copyAddress() {
+      if (!sameAddress) return;
+      const checked = sameAddress.checked;
+      const map = [
+        ["comm-address1", "postal-address1"],
+        ["comm-address2", "postal-address2"],
+        ["comm-city", "postal-city"],
+        ["comm-state", "postal-state"],
+        ["comm-postal", "postal-postal"],
+        ["comm-country", "postal-country"]
+      ];
+
+      map.forEach(function (pair) {
+        const from = field(pair[0]);
+        const to = field(pair[1]);
+        if (!to) return;
+        to.value = checked ? (from ? from.value : "") : "";
+        to.readOnly = checked;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "-")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function value(key) {
+      const el = field(key);
+      if (!el) return "-";
+      if (el.type === "file") return el.files && el.files.length ? el.files[0].name : "-";
+      if (el.type === "checkbox") return el.checked ? "Yes" : "No";
+      return el.value || "-";
+    }
+
+    function row(label, key) {
+      return '<div class="cf7-preview-item"><strong>' + escapeHtml(label) + ':</strong><span>' + escapeHtml(value(key)) + '</span></div>';
+    }
+
+    function section(title, rows) {
+      return '<div class="cf7-preview-section"><h4>' + escapeHtml(title) + '</h4><div class="cf7-preview-grid">' + rows + '</div></div>';
+    }
+
+    function buildPreview(target) {
+      const wrap = form.querySelector(target);
+      if (!wrap) return;
+
+      const total = siblingCount();
+      let html = "";
+
+      let step1 = "";
+      step1 += row("Academic Year", "academic-year");
+      step1 += row("Current City", "current-city");
+      step1 += row("First Name", "student-first-name");
+      step1 += row("Last Name", "student-last-name");
+      step1 += row("DOB", "student-dob");
+      step1 += row("Gender", "student-gender");
+      step1 += row("Grade", "student-grade");
+      step1 += row("Curriculum", "student-curriculum");
+      step1 += row("Sibling Count", "sibling-count");
+
+      for (let i = 1; i <= total; i++) {
+        step1 += row("Sibling " + i + " First Name", "sibling" + i + "-first-name");
+        step1 += row("Sibling " + i + " Last Name", "sibling" + i + "-last-name");
+        step1 += row("Sibling " + i + " DOB", "sibling" + i + "-dob");
+        step1 += row("Sibling " + i + " Gender", "sibling" + i + "-gender");
+        step1 += row("Sibling " + i + " Grade", "sibling" + i + "-grade");
+        step1 += row("Sibling " + i + " Curriculum", "sibling" + i + "-curriculum");
+      }
+      html += section("Step 1 - Student Details", step1);
+
+      let step2 = "";
+      step2 += row("Religion", "religion");
+      step2 += row("Nationality", "nationality");
+      step2 += row("Father Name", "father-name");
+      step2 += row("Father Phone", "father-phone");
+      step2 += row("Father Email", "father-email");
+      step2 += row("Father Occupation", "father-occupation");
+      step2 += row("Mother Name", "mother-name");
+      step2 += row("Mother Phone", "mother-phone");
+      step2 += row("Mother Email", "mother-email");
+      step2 += row("Mother Occupation", "mother-occupation");
+      html += section("Step 2 - Parents Details", step2);
+
+      let step3 = "";
+      step3 += row("Address Line 1", "comm-address1");
+      step3 += row("Address Line 2", "comm-address2");
+      step3 += row("City", "comm-city");
+      step3 += row("State", "comm-state");
+      step3 += row("Postal Code", "comm-postal");
+      step3 += row("Country", "comm-country");
+      step3 += row("Postal Address Line 1", "postal-address1");
+      step3 += row("Postal Address Line 2", "postal-address2");
+      step3 += row("Postal City", "postal-city");
+      step3 += row("Postal State", "postal-state");
+      step3 += row("Postal Code", "postal-postal");
+      step3 += row("Postal Country", "postal-country");
+      html += section("Step 3 - Communication Address", step3);
+
+      let step4 = "";
+      step4 += row("Guardian Name", "guardian-name");
+      step4 += row("Guardian Email", "guardian-email");
+      step4 += row("Guardian Phone", "guardian-phone");
+      step4 += row("Guardian Address 1", "guardian-address1");
+      step4 += row("Guardian Address 2", "guardian-address2");
+      step4 += row("Guardian City", "guardian-city");
+      step4 += row("Guardian State", "guardian-state");
+      step4 += row("Guardian Postal Code", "guardian-postal");
+      step4 += row("Guardian Country", "guardian-country");
+      step4 += row("Guardian Relation", "guardian-relation");
+      html += section("Step 4 - Guardian Details", step4);
+
+      let step5 = "";
+      step5 += row("Student Name", "academic-student-name");
+      step5 += row("Last Grade Attended", "last-grade-attended");
+      step5 += row("Previous School", "previous-school");
+      step5 += row("Board of Affiliation", "board-affiliation");
+      for (let i = 1; i <= total; i++) {
+        step5 += row("Sibling " + i + " Name", "sibling" + i + "-academic-name");
+        step5 += row("Sibling " + i + " Last Grade", "sibling" + i + "-last-grade-attended");
+        step5 += row("Sibling " + i + " Previous School", "sibling" + i + "-previous-school");
+        step5 += row("Sibling " + i + " Board", "sibling" + i + "-board-affiliation");
+      }
+      step5 += row("Primary Contact", "primary-contact");
+      html += section("Step 5 - Academic Information", step5);
+
+      wrap.innerHTML = html;
+    }
+
+    function validateStep() {
+      let ok = true;
+      const active = steps[current];
+      active.querySelectorAll(".wpcf7-validates-as-required").forEach(function (el) {
+        el.classList.remove("cf7-error-field");
+        if (el.disabled || el.offsetParent === null) return;
+
+        if (el.type === "checkbox") {
+          const checked = active.querySelectorAll('input[name="' + el.name + '"]:checked').length > 0;
+          if (!checked) {
+            ok = false;
+            el.classList.add("cf7-error-field");
+          }
+        } else if (el.type === "file") {
+          if (!el.files || !el.files.length) {
+            ok = false;
+            el.classList.add("cf7-error-field");
+          }
+        } else if (!String(el.value || "").trim()) {
+          ok = false;
+          el.classList.add("cf7-error-field");
+        }
+      });
+
+      if (!ok) alert("Please complete all required fields.");
+      return ok;
+    }
+
+    if (next) {
+      next.addEventListener("click", function () {
+        if (!validateStep()) return;
+        showStep(current + 1);
+        window.scrollTo({ top: form.offsetTop - 40, behavior: "smooth" });
+      });
+    }
+
+    if (prev) {
+      prev.addEventListener("click", function () {
+        showStep(current - 1);
+        window.scrollTo({ top: form.offsetTop - 40, behavior: "smooth" });
+      });
+    }
+
+    if (sibling) {
+      sibling.addEventListener("change", function () {
+        updateSiblingBlocks();
+        updateAcademic();
+        updateDocuments();
+      });
+    }
+
+    if (sameAddress) {
+      sameAddress.addEventListener("change", copyAddress);
+      ["comm-address1", "comm-address2", "comm-city", "comm-state", "comm-postal", "comm-country"].forEach(function (key) {
+        const input = field(key);
+        if (input) input.addEventListener("input", function () {
+          if (sameAddress.checked) copyAddress();
+        });
+      });
+    }
+
+    form.querySelectorAll('input[type="date"]').forEach(function (dateInput) {
+      dateInput.addEventListener("click", function () {
+        if (typeof dateInput.showPicker === "function") dateInput.showPicker();
+      });
+    });
+
+    document.addEventListener("wpcf7mailsent", function () {
+      form.reset();
+      showStep(0);
+    });
+
+    showStep(0);
+  });
+});
+</script>
